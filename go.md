@@ -55,8 +55,8 @@ will build an executable that, by default, will have the name of the module.
 ### Tests
 
 Any file that's name ends with `_test.go` is considered a test file. Within test
-files, the public functions with names matching `Test...` will be called and as
-part of the test suite.
+files, the public functions with names matching `Test...` and taking a
+pointer to `testing.T` will become part of the executed test suite.
 
 An example simple test file:
 
