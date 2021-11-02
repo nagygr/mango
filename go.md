@@ -52,9 +52,9 @@ will build an executable that, by default, will have the name of the module.
 
 ### Tests
 
-Any file that's name ends with `_test.go` is considered as a test file. Within
-test files, the public functions with names matching `Test...` will be called
-and as part of the test suite.
+Any file that's name ends with `_test.go` is considered a test file. Within test
+files, the public functions with names matching `Test...` will be called and as
+part of the test suite.
 
 An example simple test file:
 
@@ -74,5 +74,6 @@ To run the tests, issue:
 go test
 ```
 
-As the path crawling is automatic, there's no need to specify the project here.
+As the path crawling is automatic, there's no need to specify the module here.
+
 
