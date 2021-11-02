@@ -19,6 +19,8 @@ go mod init hello
 
 where `hello` is the name of the module.
 
+More on modules: [brief intro][1], [reference][2].
+
 ### Add a source file
 
 Add `main.go` (the file that holds the `main` package and within that the`main`
@@ -76,4 +78,5 @@ go test
 
 As the path crawling is automatic, there's no need to specify the module here.
 
-
+[1]: https://go.dev/blog/using-go-modules
+[2]: https://golang.org/ref/mod
