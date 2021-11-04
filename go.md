@@ -52,32 +52,6 @@ go build hello
 
 will build an executable that, by default, will have the name of the module.
 
-### Tests
-
-Any file that's name ends with `_test.go` is considered a test file. Within test
-files, the public functions with names matching `Test...` and taking a
-pointer to `testing.T` will become part of the executed test suite.
-
-An example simple test file:
-
-```go
-package main
-
-import "testing"
-
-func TestMain(t *testing.T) {
-	t.Errorf("I will always fail no matter what you do")
-}
-```
-
-To run the tests, issue:
-
-```bash
-go test
-```
-
-As the path crawling is automatic, there's no need to specify the module here.
-
 ## Cross-compiling
 
 The Go compiler can perform a cross-compilation on and to any system it runs on.
@@ -219,6 +193,65 @@ func main() {
 	fmt.Printf("Value in data: %d\n", d.value)
 }
 ```
+
+## Testing
+
+### Test setup
+
+Any file that's name ends with `_test.go` is considered a test file. Within test
+files, the public functions with names matching `Test...` and taking a
+pointer to `testing.T` will become part of the executed test suite.
+
+An example simple test file:
+
+```go
+package main
+
+import "testing"
+
+func TestMain(t *testing.T) {
+	t.Errorf("I will always fail no matter what you do")
+}
+```
+
+To run the tests, issue:
+
+```bash
+go test
+```
+
+As the path crawling is automatic, there's no need to specify the module here.
+
+### Coverage
+
+Go has a built-in coverage tool. It can be called in several ways, the simplest
+of which is:
+
+```bash
+go test -cover
+```
+
+Apart from the usual test summary that `go test` provides, this will also print the coverage in percent.
+
+In order to get a bit deeper insight, we should first have the coverage information printed to a file by issuing:
+
+```bash
+go test -coverprofile=coverage.out
+```
+
+This will create the `coverage.out` file (the name of which can be freely chosen). The coverage visualization tool of Go can then use this file to produce different outputs:
+
+-	`go tool cover -func=coverage.out`: will print a detailed (per-function) list
+	of coverage values -- something like this:
+
+	```
+	hello/main.go:5:	addTwo		100.0%
+	hello/main.go:9:	main		0.0%
+	total:			(statements)	33.3%
+	```
+
+-	`go tool cover -html=coverage.out`: will open a browser with a view of the
+	source files with their lines coloured to red or green to show whether a given line was covered with a test or not
 
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
