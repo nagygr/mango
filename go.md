@@ -23,7 +23,7 @@ More on modules: [brief intro][1], [reference][2].
 
 ### Add a source file
 
-Add `main.go` (the file that holds the `main` package and within that the`main`
+Add `main.go` (the file that holds the `main` package and within that the `main`
 function has to be called `main.go`):
 
 ```go
@@ -77,6 +77,49 @@ go test
 ```
 
 As the path crawling is automatic, there's no need to specify the module here.
+
+## Cross-compiling
+
+The Go compiler can perform a cross-compilition on any system it runs on. Two
+environment variables need to be set:
+
+-	`GOOS`: the target operating system
+-	`GOARCH`: the target architecture
+
+If these variables are not set then the configuration of the host machine is
+used as target.
+
+The available OS/arch pairs can be obtained with:
+
+```bash
+go tool dist list
+```
+
+A few valid pairs:
+
+-	`android/386`
+-	`android/amd64`
+-	`android/arm`
+-	`android/arm64`
+-	`darwin/amd64`
+-	`darwin/arm64`
+-	`linux/386`
+-	`linux/amd64`
+-	`linux/arm`
+-	`linux/arm64`
+-	`windows/386`
+-	`windows/amd64`
+-	`windows/arm`
+-	`windows/arm64`
+
+So, for example, to compile to a 63-bit Windows platform, one can issue:
+
+```bash
+GOOS=windows GOARCH=amd64 go build
+```
+
+The Go tool will make sure all the libraries in the dependency list are acquired
+in the needed format and then it creates the artifact for the given platform.
 
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
