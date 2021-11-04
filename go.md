@@ -121,5 +121,104 @@ GOOS=windows GOARCH=amd64 go build
 The Go tool will make sure all the libraries in the dependency list are acquired
 in the needed format and then it creates the artifact for the given platform.
 
+## Functions
+
+### Function types
+
+The `func(int)` type defines a function that receives an `int` and doesn't
+return anything.
+
+A function with a receiver is in fact a function with an extra argument at the
+first position, so this works:
+
+```go
+type Data struct {
+	value int
+}
+
+func (d *Data) set(i int) {
+	d.value = i
+}
+
+type ObjectSetter struct {
+	setter func(d *Data, i int)
+}
+
+func (o *ObjectSetter) set(d *Data, i int) {
+	o.setter(d, i)
+}
+
+func main() {
+	op := ObjectSetter{(*Data).set}
+	d := Data{0}
+	op.set(&d, 42)
+}
+```
+
+This way both the type of the `struct` and the argument types are bound to the
+type and thus `ObjectSetter` can only store a function that has a `Data`
+receiver and that takes `int` as an argument.
+
+Note, that the "method  pointer" was given as: `(*Data).set`.
+
+It is also possible to bind the object to the function value and thus provide a
+function that only requires the argument of the original method. This can work
+with any `struct` type but the object has to be known at the time of setting (as
+opposed to the example above where it is given at the time of calling):
+
+```go
+type Data struct {
+	value int
+}
+
+func (d *Data) set(i int) {
+	d.value = i
+}
+
+type ObjectSetter struct {
+	setter func(int)
+}
+
+func (o *ObjectSetter) set(i int) {
+	o.setter(i)
+}
+
+func main() {
+	d := Data{0}
+	op := ObjectSetter{d.set}
+	op.set(42)
+}
+```
+
+If we would like to decouple the object and the function, the generic
+`interface{}` type can be used with a type assertion and an unnamed function:
+
+```go
+type Data struct {
+	value int
+}
+
+func (d *Data) set(i int) {
+	d.value = i
+}
+
+type ObjectSetter struct {
+	setter func(object interface{}, i int)
+}
+
+func (o *ObjectSetter) set(object interface{}, i int) {
+	o.setter(object, i)
+}
+
+func main() {
+	op := ObjectSetter{func(obj interface{}, i int) {obj.(*Data).set(i)}}
+
+	d := Data{0}
+	op.set(&d, 42)
+
+	fmt.Printf("Value in data: %d\n", d.value)
+}
+```
+
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
