@@ -80,8 +80,8 @@ As the path crawling is automatic, there's no need to specify the module here.
 
 ## Cross-compiling
 
-The Go compiler can perform a cross-compilition on any system it runs on. Two
-environment variables need to be set:
+The Go compiler can perform a cross-compilation on and to any system it runs on.
+Two environment variables need to be set:
 
 -	`GOOS`: the target operating system
 -	`GOARCH`: the target architecture
@@ -112,7 +112,7 @@ A few valid pairs:
 -	`windows/arm`
 -	`windows/arm64`
 
-So, for example, to compile to a 63-bit Windows platform, one can issue:
+So, for example, to compile to a 64-bit Windows platform, one can issue:
 
 ```bash
 GOOS=windows GOARCH=amd64 go build
