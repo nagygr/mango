@@ -253,5 +253,101 @@ This will create the `coverage.out` file (the name of which can be freely chosen
 -	`go tool cover -html=coverage.out`: will open a browser with a view of the
 	source files with their lines coloured to red or green to show whether a given line was covered with a test or not
 
+## Cross-platform GUI with Fyne
+
+Fyne is an OpenGL-based cross-platform GUI library that uses the Material Design
+concepts to design its widgets.
+
+### Installing on Arch
+
+Fyne itself is a Go module:
+
+```bash
+go get fyne.io/fyne/v2
+```
+
+In order to be able to compile to other platforms, the specific toolchains need
+to be installed.
+
+To compile to Windows on Arch, install:
+
+```bash
+pacman -S mingw-w64-gcc
+```
+
+### Cross-compilation
+
+To compile a module for Windows:
+
+```bash
+GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build
+```
+
+### Simple application
+
+```go
+package main
+
+import (
+	"fmt"
+	"image/color"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/widget"
+)
+
+func main() {
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Gopher")
+
+	fileMenu := fyne.NewMenu("File",
+		fyne.NewMenuItem("Quit", func() { myApp.Quit() }),
+	)
+
+	helpMenu := fyne.NewMenu("Help",
+		fyne.NewMenuItem("About", func() {
+			dialog.ShowCustom("About", "Close", container.NewVBox(
+				widget.NewLabel("Fyne demo"),
+			), myWindow)
+		}))
+	mainMenu := fyne.NewMainMenu(
+		fileMenu,
+		helpMenu,
+	)
+	myWindow.SetMainMenu(mainMenu)
+
+	buttonPresses := 0
+	randomBtn := widget.NewButton("Random", nil)
+
+	randomBtn.OnTapped = func() {
+		buttonPresses += 1
+		s := fmt.Sprintf("Button pressed for the %d. time", buttonPresses)
+		randomBtn.SetText(s)
+	}
+	randomBtn.Importance = widget.HighImportance
+
+	box := container.NewVBox(
+		text,
+		randomBtn,
+	)
+
+	myWindow.SetContent(box)
+
+	myWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
+
+		if keyEvent.Name == fyne.KeyEscape {
+			myApp.Quit()
+		}
+	})
+
+	myWindow.ShowAndRun()
+}
+
+```
+
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
