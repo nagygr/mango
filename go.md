@@ -346,7 +346,29 @@ func main() {
 
 	myWindow.ShowAndRun()
 }
+```
 
+### Initial layout issue on i3wm
+
+On i3wm Fyne windows can look bad and the widgets may be partially unresponsive. A resize or move fixes the issue which can be automated with the following workaround:
+
+Instead of
+
+```go
+myWindow.ShowAndRun()
+```
+
+at the end, write:
+
+```go
+myWindow.Show()
+go func() {
+	time.Sleep(1 * time.Second)
+	myWindow.Hide()
+	myWindow.Resize(fyne.NewSize(600, 400))
+	myWindow.Show()
+}()
+myApp.Run()
 ```
 
 [1]: https://go.dev/blog/using-go-modules
