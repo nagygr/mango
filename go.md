@@ -383,10 +383,28 @@ To also add a condition checking the window manager, the following code can be
 used:
 
 ```go
-if runtime.GOOS == "linux" && os.Getenv("DESKTOP_SESSION") == "i3" {
+if runtime.GOOS == "linux" && strings.HasPrefix(os.Getenv("DESKTOP_SESSION"), "i3") {
 	...
 }
 ```
+
+>	**Note**
+>
+>	The `strings.HasPrefix` call is used above to check for both "i3" and "i3wm". A
+>	correct solution for checking this could be:
+>
+>	```go
+>	if runtime.GOOS == "linux" {
+>		if _, ok := map[string]int{"i3": 0, "i3wm": 0}[os.Getenv("DESKTOP_SESSION")]; ok {
+>			go func() {
+>				time.Sleep(1 * time.Second)
+>				myWindow.Hide()
+>				myWindow.Resize(fyne.NewSize(600, 400))
+>				myWindow.Show()
+>			}()
+>		}
+>	}
+>	```
 
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
