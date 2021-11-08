@@ -52,6 +52,28 @@ go build hello
 
 will build an executable that, by default, will have the name of the module.
 
+## Module handling
+
+### Automatic downloading on build
+
+Most tutorials say that one should run
+
+```bash
+go get <module-name>
+```
+
+before building a project to gather all the required libraries, have the written
+into `go.mod` and have `go.sum` generated.
+
+This can also be automated: just add the imports to the sources and run
+
+```bash
+go build -mod=mod
+```
+
+This will automatically get all the missing modules, add them to `go.mod` and
+get on with the building process as usual.
+
 ## Cross-compiling
 
 The Go compiler can perform a cross-compilation on and to any system it runs on.
