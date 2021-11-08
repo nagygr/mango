@@ -371,5 +371,22 @@ go func() {
 myApp.Run()
 ```
 
+To do this only on Linux, place the declaration and calling of the goroutine inside the following if:
+
+```go
+if runtime.GOOS == "linux" {
+	...
+}
+```
+
+To also add a condition checking the window manager, the following code can be
+used:
+
+```go
+if runtime.GOOS == "linux" && os.Getenv("DESKTOP_SESSION") == "i3" {
+	...
+}
+```
+
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
