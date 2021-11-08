@@ -62,8 +62,8 @@ Most tutorials say that one should run
 go get <module-name>
 ```
 
-before building a project to gather all the required libraries, have the written
-into `go.mod` and have `go.sum` generated.
+before building a project to gather all the required libraries, have them written
+to `go.mod` and have `go.sum` generated.
 
 This can also be automated: just add the imports to the sources and run
 
