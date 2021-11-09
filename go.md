@@ -417,7 +417,7 @@ if runtime.GOOS == "linux" && strings.HasPrefix(os.Getenv("DESKTOP_SESSION"), "i
 >
 >	```go
 >	if runtime.GOOS == "linux" {
->		if _, ok := map[string]int{"i3": 0, "i3wm": 0}[os.Getenv("DESKTOP_SESSION")]; ok {
+>		if map[string]bool{"i3": true, "i3wm": true}[os.Getenv("DESKTOP_SESSION")] {
 >			go func() {
 >				time.Sleep(1 * time.Second)
 >				myWindow.Hide()
