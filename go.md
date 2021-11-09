@@ -52,7 +52,7 @@ go build hello
 
 will build an executable that, by default, will have the name of the module.
 
-## Module handling
+## Module and package handling
 
 ### Automatic downloading on build
 
@@ -73,6 +73,77 @@ go build -mod=mod
 
 This will automatically get all the missing modules, add them to `go.mod` and
 get on with the building process as usual.
+
+### Packages in a directory hierarchy
+
+The package files can reside in a directory hiearchy which affects the `import`
+statements.
+
+In the following example the module name will be: `vcshost.com/user/module` and
+the directory tree will be:
+
+```
+go.mod
+main.go
+[lib]
+|
+*-- pkg.go
+```
+
+The `go.mod` file:
+
+```go
+module vcshost.com/user/module
+
+go 1.17
+```
+
+The `lib/pkg.go` file:
+
+```go
+package pkg
+
+type MyType struct {
+	value int
+}
+
+func MakeMyType(value int) MyType {
+	return MyType{value}
+}
+
+func (myType *MyType) Get() int {
+	return myType.value
+}
+
+func (myType *MyType) set(i int) {
+	myType.value = i
+}
+```
+
+The `main.go` file:
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"vcshost.com/user/module/lib"
+)
+
+func main() {
+	t := pkg.MakeMyType(42)
+
+	fmt.Printf("The answer is: %d\n", t.Get())
+}
+```
+
+>	**Note**
+>
+>	The symbols (type and function names) that should be accessible
+>	from outside of a package need to start with a capital letter. For
+>	example, the `set` function in the `lib/pkg.go` package is not accessible
+>	from `main.go` (or from anywhere else outside of `pkg.go` for that matter).
 
 ## Cross-compiling
 
