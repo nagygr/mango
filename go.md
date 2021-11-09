@@ -87,7 +87,7 @@ go.mod
 main.go
 [lib]
 |
-*-- pkg.go
++-- pkg.go
 ```
 
 The `go.mod` file:
