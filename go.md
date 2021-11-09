@@ -505,6 +505,9 @@ if runtime.GOOS == "linux" && strings.HasPrefix(os.Getenv("DESKTOP_SESSION"), "i
 >		}
 >	}
 >	```
+>
+>	The expression in the if statement uses the fact that maps return a type's zero value
+>	for missing keys (and, obviously, the zero value for booleans is false). 
 
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
