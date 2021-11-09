@@ -145,6 +145,13 @@ func main() {
 >	example, the `set` function in the `lib/pkg.go` package is not accessible
 >	from `main.go` (or from anywhere else outside of `pkg.go` for that matter).
 
+>	**Note**
+>
+>	The name of the file containing a package doesn't need to be the same
+>	as that of the package. The file `lib/pkg.go` can have an arbitrary
+>	name. In fact, a package can reside in multiple files: the contents of
+>	all the files that contain the same package declaration are united.
+
 ## Cross-compiling
 
 The Go compiler can perform a cross-compilation on and to any system it runs on.
