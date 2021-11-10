@@ -450,7 +450,8 @@ func main() {
 
 ### Initial layout issue on i3wm
 
-On i3wm Fyne windows can look bad and the widgets may be partially unresponsive. A resize or move fixes the issue which can be automated with the following workaround:
+On i3wm Fyne windows can look bad and the widgets may be partially unresponsive upon startup. A resize or move 
+fixes the issue which can be automated with the following workaround:
 
 Instead of
 
