@@ -150,7 +150,9 @@ func main() {
 >	name. In fact, a package can reside in multiple files: the contents of
 >	all the files that contain the same package declaration are united.
 
-# Cross-compiling
+# Compilation
+
+## Cross-compiling
 
 The Go compiler can perform a cross-compilation on and to any system it runs on.
 Two environment variables need to be set:
@@ -192,6 +194,33 @@ GOOS=windows GOARCH=amd64 go build
 
 The Go tool will make sure all the libraries in the dependency list are acquired
 in the needed format and then it creates the artifact for the given platform.
+
+## Viewing compiler decisions
+
+Compiler decisions (function inlining, variable placement (stack vs. heap)) can be visualized by sending a compiler flag to the compiler tool.
+
+Flags can be sent down to the compiler from the `build` command using the
+`-gcflags` switch which takes a string that contains the compiler switches:
+
+-	`-m`: tells the compiler to print the decisions made during compilation
+-	`-l`: tells the compiler to refrain from inlining (inlining can hide stack vs. heap information)
+
+So to build a project and get the decisions, issue:
+
+```bash
+go build -gcflags '-m -l'
+```
+
+## Viewing the assembly output
+
+The actual assembly listing that the Go program is turned into can be viewed by issuing:
+
+```bash
+go tool compile -S <source-code>
+```
+
+This command directly addresses the compiler and it expects an actual Go file as
+its argument (won't work with the current module automatically as `build` does).
 
 # Functions
 
