@@ -1,17 +1,15 @@
-# Development in Go
+# Installation
 
-## Installation
-
-### Arch-derivatives
+## Arch-derivatives
 
 Packages:
 
 -	`go`: basic development tools
 -	`gopls`: language server (e.g. needed by VS Code)
 
-## Creating and building a simple module
+# Creating and building a simple module
 
-### Initialize a module
+## Initialize a module
 
 ```bash
 go mod init hello
@@ -21,7 +19,7 @@ where `hello` is the name of the module.
 
 More on modules: [brief intro][1], [reference][2].
 
-### Add a source file
+## Add a source file
 
 Add `main.go` (the file that holds the `main` package and within that the `main`
 function has to be called `main.go`):
@@ -36,7 +34,7 @@ func main() {
 }
 ```
 
-### Run or build the module
+## Run or build the module
 
 The module can be referred to by its name so:
 
@@ -52,9 +50,9 @@ go build hello
 
 will build an executable that, by default, will have the name of the module.
 
-## Module and package handling
+# Module and package handling
 
-### Automatic downloading on build
+## Automatic downloading on build
 
 Most tutorials say that one should run
 
@@ -74,7 +72,7 @@ go build -mod=mod
 This will automatically get all the missing modules, add them to `go.mod` and
 get on with the building process as usual.
 
-### Packages in a directory hierarchy
+## Packages in a directory hierarchy
 
 The package files can reside in a directory hiearchy which affects the `import`
 statements.
@@ -152,7 +150,7 @@ func main() {
 >	name. In fact, a package can reside in multiple files: the contents of
 >	all the files that contain the same package declaration are united.
 
-## Cross-compiling
+# Cross-compiling
 
 The Go compiler can perform a cross-compilation on and to any system it runs on.
 Two environment variables need to be set:
@@ -195,9 +193,9 @@ GOOS=windows GOARCH=amd64 go build
 The Go tool will make sure all the libraries in the dependency list are acquired
 in the needed format and then it creates the artifact for the given platform.
 
-## Functions
+# Functions
 
-### Function types
+## Function types
 
 The `func(int)` type defines a function that receives an `int` and doesn't
 return anything.
@@ -294,9 +292,9 @@ func main() {
 }
 ```
 
-## Testing
+# Testing
 
-### Test setup
+## Test setup
 
 Any file that's name ends with `_test.go` is considered a test file. Within test
 files, the public functions with names matching `Test...` and taking a
@@ -322,7 +320,7 @@ go test
 
 As the path crawling is automatic, there's no need to specify the module here.
 
-### Coverage
+## Coverage
 
 Go has a built-in coverage tool. It can be called in several ways, the simplest
 of which is:
@@ -353,12 +351,12 @@ This will create the `coverage.out` file (the name of which can be freely chosen
 -	`go tool cover -html=coverage.out`: will open a browser with a view of the
 	source files with their lines coloured to red or green to show whether a given line was covered with a test or not
 
-## Cross-platform GUI with Fyne
+# Cross-platform GUI with Fyne
 
 Fyne is an OpenGL-based cross-platform GUI library that uses the Material Design
 concepts to design its widgets.
 
-### Installing on Arch
+## Installing on Arch
 
 Fyne itself is a Go module:
 
@@ -375,7 +373,7 @@ To compile to Windows on Arch, install:
 pacman -S mingw-w64-gcc
 ```
 
-### Cross-compilation
+## Cross-compilation
 
 To compile a module for Windows:
 
@@ -383,7 +381,7 @@ To compile a module for Windows:
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build
 ```
 
-### Simple application
+## Simple application
 
 ```go
 package main
@@ -448,7 +446,7 @@ func main() {
 }
 ```
 
-### Initial layout issue on i3wm
+## Initial layout issue on i3wm
 
 On i3wm Fyne windows can look bad and the widgets may be partially unresponsive upon startup. A resize or move 
 fixes the issue which can be automated with the following workaround:
