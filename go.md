@@ -380,12 +380,14 @@ This will create the `coverage.out` file (the name of which can be freely chosen
 -	`go tool cover -html=coverage.out`: will open a browser with a view of the
 	source files with their lines coloured to red or green to show whether a given line was covered with a test or not
 
-# Cross-platform GUI with Fyne
+# GUI
+
+## Cross-platform GUI with Fyne
 
 Fyne is an OpenGL-based cross-platform GUI library that uses the Material Design
 concepts to design its widgets.
 
-## Installing on Arch
+### Installing on Arch
 
 Fyne itself is a Go module:
 
@@ -402,7 +404,7 @@ To compile to Windows on Arch, install:
 pacman -S mingw-w64-gcc
 ```
 
-## Cross-compilation
+### Cross-compilation
 
 To compile a module for Windows:
 
@@ -410,7 +412,7 @@ To compile a module for Windows:
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build
 ```
 
-## Simple application
+### Simple application
 
 ```go
 package main
@@ -475,7 +477,7 @@ func main() {
 }
 ```
 
-## Initial layout issue on i3wm
+### Initial layout issue on i3wm
 
 On i3wm Fyne windows can look bad and the widgets may be partially unresponsive upon startup. A resize or move 
 fixes the issue which can be automated with the following workaround:
