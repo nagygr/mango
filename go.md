@@ -323,10 +323,10 @@ func main() {
 
 ## Deferring calls
 
-The `defer` keyword can be used to instruct the compiler to make a call
-to a given function right before the given function returns (in any way --
-panics included). This can be used to free/close resources (similar to RAII in
-C++ but in Go the functions are called at the end of the function and not the
+The `defer` keyword can be used to instruct the compiler to make a call to a
+given function right before the given function returns (in any way -- panics
+included). This can be used to free/close resources (similar to RAII in C++ but
+in Go the deferred functions are called at the end of the function and not the
 end of the code block).
 
 The argument of the deferred function are evaluated immediately, it's only the
