@@ -321,6 +321,62 @@ func main() {
 }
 ```
 
+## Deferring calls
+
+The `defer` keyword can be used to instruct the compiler to make a call
+to a given function right before the given function returns (in any way --
+panics included). This can be used to free/close resources (similar to RAII in
+C++ but in Go the functions are called at the end of the function and not the
+end of the code block).
+
+The argument of the deferred function are evaluated immediately, it's only the
+call that is made at the end of the function.
+
+If there are more than one deferred functions: the calls to them happen in a
+reverse order as they are stored in a stack. The following example is not a
+realistic one but it shows how the ordering of defers can be crucial.
+
+```go
+package main
+
+import "fmt"
+
+type Object struct {
+	value *int
+}
+
+func MakeObject() Object {
+	vptr := new(int)
+	*vptr = 42
+	return Object{value: vptr}
+}
+
+func (o *Object) Clear() {
+	*o.value = 0
+}
+
+func (o *Object) Nil() {
+	o.value = nil
+}
+
+func main() {
+	o := MakeObject()
+	defer o.Nil()
+	defer o.Clear()
+
+	/*
+	// This would be the logical order (the order that the functions should be
+	// called), but it will cause a nil pointer dereference panic because the
+	// deferred functions are stored in a stack and thus the call order is
+	// reversed.
+	defer o.Clear()
+	defer o.Nil()
+	*/
+
+	fmt.Printf("%v, %d\n", o.value, *o.value)
+}
+```
+
 # Testing
 
 ## Test setup
