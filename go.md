@@ -436,6 +436,73 @@ This will create the `coverage.out` file (the name of which can be freely chosen
 -	`go tool cover -html=coverage.out`: will open a browser with a view of the
 	source files with their lines coloured to red or green to show whether a given line was covered with a test or not
 
+# File formats
+
+## XML
+
+### Parsing large XMLs
+
+Large XML files should be parsed in a SAX-like manner to avoid loading the
+entire structure in memory. The standard `encoding/xml` package provides means
+to that (and many other things -- e.g. marchalling and unmarshalling). The
+`Decoder` struct can be used to advance in an XML file token by token. Its
+`Token()` method returns the upcoming token or (nil, io.EOF) when the end of
+file is reached.
+
+Here's a small example showing how this works:
+
+```go
+package main
+
+import (
+	"encoding/xml"
+	"fmt"
+	"io"
+	"log"
+	"os"
+)
+
+func main() {
+	var xmlFile string = "data/test.xml"
+
+	osm, err := os.Open(xmlFile)
+
+	if err != nil {
+		log.Fatalf("Error while opening xml file (%s): %s", xmlFile, err.Error())
+	}
+
+	var decoder = xml.NewDecoder(osm)
+
+	for {
+		token, err := decoder.Token()
+
+		if err == io.EOF {
+			fmt.Println("Successfully processed the xml file.")
+			break
+		} else if err != nil {
+			log.Fatalf("Error while parsing xml file (%s): %s", xmlFile, err.Error())
+		}
+
+		switch t := token.(type) {
+			case xml.CharData:
+				fmt.Printf("Char data: %s\n", t)
+			case xml.StartElement:
+				fmt.Printf("Name: %s\n", t.Name.Local)
+				for _, a := range t.Attr {
+					fmt.Printf("\tAttribute: %s %s\n", a.Name.Local, a.Value)
+				}
+			case xml.ProcInst:
+				fmt.Printf("ProcInst: %s\n", t.Target)
+			default:
+				fmt.Println("Other XML element")
+		}
+	}
+}
+```
+
+The token types to check are: `StartElement`, `EndElement`, `CharData`,
+`Comment`, `ProcInst` and `Directive`.
+
 # GUI
 
 ## Cross-platform GUI with Fyne

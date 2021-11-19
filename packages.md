@@ -13,6 +13,8 @@
 
 ### SAX
 
+-	`encoding/xml`: standard library package that can be used as a SAX parser
+	(see: `xml.Decoder.Token()`)
 -	`github.com/kokardy/saxlike`: SAX parser
 
 ## Document formats
