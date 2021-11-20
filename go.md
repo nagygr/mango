@@ -503,6 +503,41 @@ func main() {
 The token types to check are: `StartElement`, `EndElement`, `CharData`,
 `Comment`, `ProcInst` and `Directive`.
 
+In the snippet above an infinite `for` loop was used and it breaked out of the
+loop when the end of the file was reached. This is idiomatic, but not so good
+for readability, especially with longer loop bodies. The following solution can
+be used instead:
+
+
+```go
+	// ... (snippet, see full program code above)
+
+	for token, err := decoder.Token(); err == nil; token, err = decoder.Token() {
+
+		switch t := token.(type) {
+			case xml.CharData:
+				fmt.Printf("Char data: %s\n", t)
+			case xml.StartElement:
+				fmt.Printf("Name: %s\n", t.Name.Local)
+				for _, a := range t.Attr {
+					fmt.Printf("\tAttribute: %s %s\n", a.Name.Local, a.Value)
+				}
+			case xml.ProcInst:
+				fmt.Printf("ProcInst: %s\n", t.Target)
+			default:
+				fmt.Println("Other XML element")
+		}
+	}
+
+	if err == io.EOF {
+		fmt.Println("Successfully processed the OSM file.")
+	} else if err != nil {
+		log.Fatalf("Error while parsing osm file (%s): %s", osmFile, err.Error())
+	}
+
+	// ...
+```
+
 # GUI
 
 ## Cross-platform GUI with Fyne
