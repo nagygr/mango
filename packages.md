@@ -22,3 +22,10 @@
 ### MS Office XML
 
 -	`baliance.com/gooxml`: Open XML (.docx, .xlsx, .pptx) creation and editing
+
+## Testing
+
+### Mocking
+
+-	`https://github.com/golang/mock`: Mocking framework that works with the
+	built-in testing module
