@@ -150,6 +150,43 @@ func main() {
 >	name. In fact, a package can reside in multiple files: the contents of
 >	all the files that contain the same package declaration are united.
 
+## Publishing a package
+
+When publishing a package the commits that will act as versions of the library
+shall be tagged. This can also be done after the commit has been pushed. Just
+issue:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The library can then referenced in `go.mod` as e.g.:
+
+```
+module saxtest
+
+go 1.17
+
+require github.com/nagygr/saxparser v0.1.0
+```
+
+Without the tags, virtual tags will be created automatically for the head but
+updating a package with automatic tags is cumbersome, so explicit taggin should
+be used. When a version is updated in `go mod`, issuing
+
+```bash
+go mod tidy
+```
+
+or
+
+```bash
+go build -mod=mod
+```
+
+downloads the latest version.
+
 # Compilation
 
 ## Cross-compiling
