@@ -178,7 +178,7 @@ as simple as this, but there a few more rules [here][3].
 
 If the overview documentation of a package is too long, it can be moved to a
 separate file called `doc.go` in the same directory. The package declaration
-should be inserted to that file as well and the documentation should directly
+should be inserted to that file as well and the documentation should go directly
 above it in a comment (just as with normal source files).
 
 The documentation of a given package will then be available at:
