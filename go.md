@@ -150,6 +150,41 @@ func main() {
 >	name. In fact, a package can reside in multiple files: the contents of
 >	all the files that contain the same package declaration are united.
 
+## Documentation
+
+Documentation is supported by the `godoc` tool which can be installed by
+issuing:
+
+```bash
+go get golang.org/x/tools/cmd/godoc
+```
+
+This command will create an executable called `godoc` in `$GOPATH/bin/`
+(typically `~/go/bin` on Linux machines).
+
+It can be run by issuing:
+
+```bash
+godoc -http=:6060
+```
+
+This should be executed in a package's root directory and the port can of course
+be changed.
+
+It will read documentation comments which in Go are basically simple textual
+comments directly above a declaration with the first sentence starting with the
+name of the element (and "Package <packagename>" for packages). It's basically
+as simple as this, but there a few more rules [here][3].
+
+If the overview documentation of a package is too long, it can be moved to a
+separate file called `doc.go` in the same directory. The package declaration
+should be inserted to that file as well and the documentation should directly
+above it in a comment (just as with normal source files).
+
+The documentation of a given package will then be available at:
+`http://localhost:6060/pkg/<package-name>`, e.g.:
+`http://localhost:6060/pkg/github.com/nagygr/saxparser/`.
+
 ## Publishing a package
 
 When publishing a package the commits that will act as versions of the library
@@ -736,3 +771,4 @@ if runtime.GOOS == "linux" && strings.HasPrefix(os.Getenv("DESKTOP_SESSION"), "i
 
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
+[3]: https://go.dev/blog/godoc
