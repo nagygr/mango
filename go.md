@@ -508,6 +508,78 @@ This will create the `coverage.out` file (the name of which can be freely chosen
 -	`go tool cover -html=coverage.out`: will open a browser with a view of the
 	source files with their lines coloured to red or green to show whether a given line was covered with a test or not
 
+# Concurrency
+
+## Channels and wait groups
+
+Channels are a means of communication between goroutines (Go's green threads)
+and can also be used for synchronization. To synchronize/wait for multiple
+threads, wait groups (`sync.WaitGroup`) come handy.
+
+Channels are created with the built-in `make` function. They are strongly typed,
+the data type needs to be set in the declaration: `ch := make(chan int)`.
+
+Channels can be buffered or unbuffered. The size of the buffer is the second
+(and optional) argument to `make`. The default value is 1 which creates an
+unbuffered channel that blocks the writer until the data written to the channel
+is read.
+
+Writing to (`ch <- data`) and reading from (`data <- ch`) channels is done in a
+synchronized and atomic manner. It is also blocking for the writers and readers
+when the channel's buffer is full or empty respectively. Reading can also be
+performed with a for-range loop. The exit condition for the loop will be the
+closing of the channel (`close(ch)`).
+
+Wait groups are setup with the number of threads to wait for (e.g. `wg.Add(2)`),
+the threads shall call `wg.Done()` on them when they finish, and at the
+synchronization point `wg.Wait()` shall be called.
+
+The following example shows how these two can be used to create a simple single
+writer multiple reader situation.
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func source(c chan string) {
+	data := []string {
+		"apple", "banana", "cherry", "pear", "grape", "ananas",
+		"potato", "carrot", "beetroot", "pea", "bean", "cabbage",
+	}
+
+	for _, d := range data {
+		c <- d
+	}
+
+	close(c)
+}
+
+func sink(c chan string, id int, wg *sync.WaitGroup) {
+	for d := range c {
+		fmt.Printf("[%d]: %s\n", id, d)
+	}
+
+	wg.Done()
+}
+
+func main() {
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	ch := make(chan string, 2)
+
+	go source(ch)
+	go sink(ch, 0, &wg)
+	go sink(ch, 1, &wg)
+
+	wg.Wait()
+}
+```
+
 # File formats
 
 ## XML
