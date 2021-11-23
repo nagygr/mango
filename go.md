@@ -50,6 +50,19 @@ go build hello
 
 will build an executable that, by default, will have the name of the module.
 
+## Formatting the code
+
+Go comes with a code formatter that makes sure that the code is in accordance
+with the standards in terms of formatting. It can be called on a file by
+issuing e.g.:
+
+```bash
+go fmt main.go
+```
+
+This overwrites the file (can add/remove whitespaces, can remove unnecessary
+imports). Most IDE's call this utility upon saving to disc.
+
 # Module and package handling
 
 ## Automatic downloading on build
