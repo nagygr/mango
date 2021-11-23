@@ -546,7 +546,7 @@ import (
 )
 
 func source(c chan string) {
-	data := []string {
+	data := [...]string {
 		"apple", "banana", "cherry", "pear", "grape", "ananas",
 		"potato", "carrot", "beetroot", "pea", "bean", "cabbage",
 	}
