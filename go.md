@@ -196,7 +196,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The library can then referenced in `go.mod` as e.g.:
+The library can then be referenced in `go.mod` as e.g.:
 
 ```
 module saxtest
@@ -207,7 +207,7 @@ require github.com/nagygr/saxparser v0.1.0
 ```
 
 Without the tags, virtual tags will be created automatically for the head but
-updating a package with automatic tags is cumbersome, so explicit taggin should
+updating a package with automatic tags is cumbersome, so explicit tagging should
 be used. When a version is updated in `go mod`, issuing
 
 ```bash
