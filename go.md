@@ -854,6 +854,20 @@ if runtime.GOOS == "linux" && strings.HasPrefix(os.Getenv("DESKTOP_SESSION"), "i
 >	The expression in the if statement uses the fact that maps return a type's zero value
 >	for missing keys (and, obviously, the zero value for booleans is false). 
 
+>	**Note**
+>
+>	There seems to be a simple and much less obstrusive solution to the problem:
+>
+>	```go
+>	myWindow.Show()
+>	if runtime.GOOS == "linux" {
+>		if map[string]bool{"i3": true, "i3wm": true}[os.Getenv("DESKTOP_SESSION")] {
+>			myWindow.Content().Refresh()
+>		}
+>	}
+>	myApp.Run()
+>	```
+
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
 [3]: https://go.dev/blog/godoc
