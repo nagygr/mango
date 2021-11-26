@@ -953,6 +953,8 @@ fail with several `target not found` errors as of 26-11-2021.
 This is a simple framework still in heavy development. It is based on GTK, but
 unlike gotk, it can be cross-compiled with ease.
 
+In order for `goey` to work, it needs the gtk development packages to be available (on Arch: `extra/gtk3`).
+
 The following snippet shows a simple example, which can be compiled to the host with `go build -mod=mod`:
 
 ```go
