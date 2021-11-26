@@ -868,6 +868,180 @@ if runtime.GOOS == "linux" && strings.HasPrefix(os.Getenv("DESKTOP_SESSION"), "i
 >	myApp.Run()
 >	```
 
+## GTK
+
+Go binding for GTK3 are provided by `github.com/gotk3/gotk3`. First it needs to
+be installed (it can take quite some time):
+
+```bash
+go install github.com/gotk3/gotk3/gtk
+```
+
+Then the following code should compile with `go build`:
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/gotk3/gotk3/gtk"
+)
+
+func main() {
+	gtk.Init(nil)
+
+	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	if err != nil {
+		log.Fatal("Unable to create window:", err)
+	}
+	win.SetTitle("Simple Example")
+	win.Connect("destroy", func() {
+		gtk.MainQuit()
+	})
+
+	l, err := gtk.LabelNew("Hello, gotk3!")
+	if err != nil {
+		log.Fatal("Unable to create label:", err)
+	}
+
+	b, err := gtk.ButtonNewWithLabel("Press me")
+
+	if err != nil {
+		log.Fatal("Unable to create button: ", err)
+	}
+
+	b.Connect("clicked", func() { fmt.Println("I've been clicked") })
+
+	box, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
+
+	if err != nil {
+		log.Fatal("Couldn't create box: ", err)
+	}
+
+	box.Add(l)
+	box.Add(b)
+
+	win.Add(box)
+
+	win.SetDefaultSize(800, 600)
+
+	win.ShowAll()
+
+	gtk.Main()
+}
+```
+
+### Cross-compilation from Linux to Windows (broken)
+
+On Arch, the cross-compilation needs an installation with the right toolkit:
+
+```bash
+PKG_CONFIG_PATH=/usr/x86_64-w64-mingw32/lib/pkgconfig \
+CGO_ENABLED=1 CC=x86_64-w64-mingw32-cc GOOS=windows GOARCH=amd64\
+go install github.com/gotk3/gotk3/gtk
+```
+
+This fails if `aur/mingw-w64-gtk3`, `aur/mingw-w64-cairo` and
+`aur/mingw-w64-gettext` are not installed. Unfortunately, on Arch/Manjaro these
+fail with several `target not found` errors as of 26-11-2021.
+
+
+## Goey
+
+This is a simple framework still in heavy development. It is based on GTK, but
+unlike gotk, it can be cross-compiled with ease.
+
+The following snippet shows a simple example, which can be compiled to the host with `go build -mod=mod`:
+
+```go
+// This package provides an example application built using the goey package
+// that shows a single button.  The button is centered in the window, and, when
+// the button is clicked, the button's caption is changed to keep a running
+// total.
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+
+	"bitbucket.org/rj/goey"
+	"bitbucket.org/rj/goey/base"
+	"bitbucket.org/rj/goey/loop"
+)
+
+var (
+	mainWindow *goey.Window
+	clickCount int
+)
+
+func main() {
+	err := loop.Run(createWindow)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %s\n", err)
+		os.Exit(1)
+	}
+}
+
+func createWindow() error {
+	// This is the callback used to initialize the GUI state.  For this simple
+	// example, we need to create a new top-level window, and set a child
+	// widget.
+	mw, err := goey.NewWindow("One Button", render())
+	if err != nil {
+		return err
+	}
+
+	// We store a copy of the pointer to the window so that we can update the
+	// GUI at a later time.
+	mainWindow = mw
+
+	return nil
+}
+
+func updateWindow() {
+	// To update the window, we generate a new widget for the contents of the
+	// top-level window.
+	err := mainWindow.SetChild(render())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %s\n", err)
+	}
+}
+
+func render() base.Widget {
+	// The text for the button will depend on how many times it has been
+	// clicked.  Build the string for the button's caption.
+	text := "Click me!"
+	if clickCount > 0 {
+		text = text + "  (" + strconv.Itoa(clickCount) + ")"
+	}
+
+	// We return a widget describing the desired state of the GUI.  Note that
+	// this is data only, and no changes have been effected yet.
+	return &goey.Padding{
+		Insets: goey.DefaultInsets(),
+		Child: &goey.Align{
+			Child: &goey.Button{Text: text, OnClick: func() {
+				// Side-effect for clicking the button.
+				clickCount++
+				// Update the contents of the top-level window.
+				updateWindow()
+			}},
+		},
+	}
+}
+```
+
+### Cross-compilation
+
+A goey project can be compiled for Windows on Arch by issuing:
+
+```bash
+GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=mod
+```
+
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
 [3]: https://go.dev/blog/godoc
