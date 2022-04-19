@@ -593,6 +593,21 @@ func main() {
 }
 ```
 
+## Hardware concurrency
+
+Although the threads in Go are lightweight, it can be a good idea to scale
+the number of parallel threads with respect to the number of available cores.
+This information can be retrieved using the `runtime` package:
+
+```go
+import "runtime"
+
+cores := runtime.NumCPU()
+```
+
+The size of channels and the number of parallel goroutines can be based on this
+value.
+
 # File formats
 
 ## XML
