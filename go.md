@@ -595,7 +595,7 @@ func main() {
 
 ## Hardware concurrency
 
-Although the threads in Go are lightweight, it can be a good idea to scale
+Although threads in Go are lightweight, it can be a good idea to scale
 the number of parallel threads with respect to the number of available cores.
 This information can be retrieved using the `runtime` package:
 
