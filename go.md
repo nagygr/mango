@@ -163,6 +163,43 @@ func main() {
 >	name. In fact, a package can reside in multiple files: the contents of
 >	all the files that contain the same package declaration are united.
 
+### More on imports
+
+Imports can be given *aliases* to make it easier to refer to them in the code:
+
+```go
+import dg "github.com/bwmarrin/discordgo"
+
+func main() {
+    err := dg.New()
+}
+```
+
+A *dot import* unifies namespaces, i.e. it imports a package in a way that all
+the symbols from that package are added to the current namespace, thus they
+don't need to be prepended with the package name. This can, of course, cause
+name clashes and should be used sparingly (if ever):
+
+```go
+import (
+    . "math"
+    "fmt"
+)
+
+fmt.Println(Pi) // instead of math.Pi
+```
+
+A `blank import` can be used during development to stop go from complaining
+about an unused import (and `go fmt` or IDEs using `go fmt`) from removing them
+automatically:
+
+```go
+import (
+    "database/sql"
+    _ "github.com/go-sql-driver/mysql"
+)
+```
+
 ## Documentation
 
 Documentation is supported by the `godoc` tool which can be installed by
