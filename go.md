@@ -235,6 +235,22 @@ go build -mod=mod
 
 downloads the latest version.
 
+Packages downloaded by `go build` or `go get` are automatically entered into
+the [official go module directory][4] (it takes a few minutes for the changes
+to get through). Every module has its own page here, where important details
+(`go.mod` file, license, versions) are shown together with the projects readme
+markdown document and `godoc` documentation. A link to the repository is also
+shown.
+
+If, for some reason, the package doesn't show up, the following command can be
+issued from within a go module:
+
+```bash
+GOPROXY=https://proxy.golang.org GO111MODULE=on go get github.com/nagygr/ooxml2txt@v0.2.0
+```
+
+or it can be requested on the page.
+
 # Compilation
 
 ## Cross-compiling
@@ -1062,3 +1078,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [1]: https://go.dev/blog/using-go-modules
 [2]: https://golang.org/ref/mod
 [3]: https://go.dev/blog/godoc
+[4]: https://pkg.go.dev/
