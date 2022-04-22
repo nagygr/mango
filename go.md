@@ -393,35 +393,35 @@ package main
 
 import "fmt"
 
-type apple interface {
+type Apple interface {
 	f(int) int
 }
 
-type banana struct {
+type Banana struct {
 	 i int
 }
 
-func (b *banana) f(v int) int {
+func (b *Banana) f(v int) int {
 	return b.i * v
 }
 
-type grape struct {}
+type Grape struct {}
 
-func (g *grape) f() int {
+func (g *Grape) f() int {
 	return 42
 }
 
 func main() {
-	var _ apple = (*banana)(nil)
-	var _ apple = (*grape)(nil)   // (!) FAILS
+	var _ Apple = (*Banana)(nil)
+	var _ Apple = (*Grape)(nil)   // (!) FAILS
 }
 ```
 
 Trying to compile this code results in the following error message:
 
 ```
-/a.go:25:16: cannot use (*grape)(nil) (value of type *grape) as type apple in variable declaration:
-	*grape does not implement apple (wrong type for f method)
+/a.go:25:16: cannot use (*Grape)(nil) (value of type *Grape) as type apple in variable declaration:
+	*Grape does not implement Apple (wrong type for f method)
 		have f() int
 		want f(int) int
 ```
