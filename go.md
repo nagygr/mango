@@ -360,6 +360,72 @@ go tool compile -S <source-code>
 This command directly addresses the compiler and it expects an actual Go file as
 its argument (won't work with the current module automatically as `build` does).
 
+# Interfaces
+
+Interfaces can be used to declare a set of public functions that a type must
+implement. Interface implementation is not shown in syntax, it is implicit
+(much like with templates in C++ -- duck typing).
+
+A function that shall be able to use any instance that implements the interface
+should take an interface *by value*. The vtable-like behaviour that enables
+this functionality is then provided by the language. On the calling side a
+pointer of a complete type should be passed in.
+
+The following "trick" makes the compiler check and emit an error if a concrete
+type doesn't implement an interface:
+
+```go
+var _ InterfaceName = (*ConcreteTypeName)(nil)
+```
+
+>	**Note**
+>
+>	In the line above we declare an unnamedvariable (which will be optimized
+>	out) and try to assign a pointer of a concrete type (in fact a `nil`
+>	pointer cast to the concrete type so as to avoid instantiation on this side
+>	as well). If the concrete type fails to implement the interface then this
+>	will emit a compiler error.
+
+An example:
+
+```go
+package main 
+
+import "fmt"
+
+type apple interface {
+	f(int) int
+}
+
+type banana struct {
+	 i int
+}
+
+func (b *banana) f(v int) int {
+	return b.i * v
+}
+
+type grape struct {}
+
+func (g *grape) f() int {
+	return 42
+}
+
+func main() {
+	var _ apple = (*banana)(nil)
+	var _ apple = (*grape)(nil)   // (!) FAILS
+}
+```
+
+Trying to compile this code results in the following error message:
+
+```
+/a.go:25:16: cannot use (*grape)(nil) (value of type *grape) as type apple in variable declaration:
+	*grape does not implement apple (wrong type for f method)
+		have f() int
+		want f(int) int
+```
+
 # Functions
 
 ## Function types
