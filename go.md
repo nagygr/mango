@@ -189,7 +189,7 @@ import (
 fmt.Println(Pi) // instead of math.Pi
 ```
 
-A `blank import` can be used during development to stop go from complaining
+A *blank import* can be used during development to stop go from complaining
 about an unused import (and `go fmt` or IDEs using `go fmt`) from removing them
 automatically:
 
