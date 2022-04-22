@@ -607,6 +607,20 @@ go test
 
 As the path crawling is automatic, there's no need to specify the module here.
 
+If the project contains subdirectories (subpackages) and tests reside in them,
+the command that runs the tests should be issued in the following form to
+instruct it to perform a recursive crawling:
+
+```bash
+go test ./...
+```
+
+If tests want to refer to files in the repository, the paths should be given as
+relative paths from the given test file.
+
+The `go test` command also runs a sanity check on the code so it is worth
+issuing it even without actual tests.
+
 ## Coverage
 
 Go has a built-in coverage tool. It can be called in several ways, the simplest
