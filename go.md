@@ -391,8 +391,6 @@ An example:
 ```go
 package main 
 
-import "fmt"
-
 type Apple interface {
 	f(int) int
 }
