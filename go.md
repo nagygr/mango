@@ -657,6 +657,13 @@ produce different outputs:
 	source files with their lines coloured to red or green to show whether a
 	given line was covered with a test or not
 
+## Logging during testing
+
+Printing to the standard out using `fmt.Print*` is not possible during testing,
+but the testing object has logging functions (`t.Logf(...)`). Logs are only
+shown for failing tests or when the `-test.v` flag is set when running the
+tests.
+
 # Concurrency
 
 ## Channels and wait groups
