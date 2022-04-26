@@ -579,6 +579,21 @@ func main() {
 }
 ```
 
+# Errors
+
+Go doesn't have exeptions. Instead it has functions that can return multiple
+values, one of which is typically a value of type `error`. If the returned
+`error` value is not `nil`, it means that the function encountered an error and
+couldn't perform its task succesfully. This should always be checked and acted
+upon. Quite often errors are forwarded up the call stack to a point where they
+can be handled correctly.
+
+Errors can be created two ways: the `errors.New(string)` function takes a
+string that becomes the error message. One needs `fmt.Sprintf` to get a
+formatted string into it though. This is where `fmt.Errorf(string, ...any)`
+comes into play: it takes a format string and any number of parameters and
+returns an error with the created string as a message.
+
 # Testing
 
 ## Test setup
