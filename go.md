@@ -816,6 +816,86 @@ func main() {
 >	evident that `Wait` returns immediately after receiving an error no matter
 >	how many unfinished tasks are still working.
 
+## Contexts
+
+Contexts are objects that can be used to share data and to control concurrent
+threads (e.g. cancellation).
+
+A simple example showing how data can be set and read is the following:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+)
+
+func main() {
+	ctx := context.Background()
+	ctx = addValue(ctx)
+	readValue(ctx)
+}
+
+func addValue(ctx context.Context) context.Context {
+	return context.WithValue(ctx, "key", "test-value")
+}
+
+func readValue(ctx context.Context) {
+	val := ctx.Value("key")
+	fmt.Println(val)
+}
+```
+
+>	**Note**
+>
+>	It is important to note that the functions  that take and mutate `Context`
+>	objects always return a new `Context` that has to be used instead of the
+>	old one. `WithValue` for example takes the original context, adds a
+>	key-value pair and returns a `Context` with every previously set value and
+>	the new piece of information. This pattern is used by every method handling
+>	`Context`s.
+
+In the following example, a handler middleware adds a *guid* to the
+`http.Request` object using a `Context`. This gets written to the log (and thus
+the standard out) when `localhost:8080/ishealthy` is requested with a *get*
+method.
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+)
+
+func main() {
+	router := mux.NewRouter()
+	router.Use(guidMiddleware)
+	router.HandleFunc("/ishealthy", handleIsHealthy).Methods(http.MethodGet)
+	http.ListenAndServe(":8080", router)
+}
+
+func handleIsHealthy(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	uuid := r.Context().Value("uuid")
+	log.Printf("[%v] Returning 200 - Healthy", uuid)
+	w.Write([]byte("Healthy"))
+}
+
+func guidMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		uuid := uuid.New()
+		r = r.WithContext(context.WithValue(r.Context(), "uuid", uuid))
+		next.ServeHTTP(w, r)
+	})
+}
+```
+
 ## Errgroup with cancellable context
 
 A cancellable context is a context for parallel goroutines that can be used to
