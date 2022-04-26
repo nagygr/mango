@@ -985,6 +985,12 @@ func main() {
 }
 ```
 
+>	**Note**
+>
+>	Please note how the parallel tasks can be cancelled by calling the `done`
+>	function of the cancellable context. The tasks need to listen for the done
+>	signal using a `select`.
+
 # File formats
 
 ## XML
