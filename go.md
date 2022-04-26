@@ -766,6 +766,145 @@ cores := runtime.NumCPU()
 The size of channels and the number of parallel goroutines can be based on this
 value.
 
+## Error groups
+
+The problem with `WaitGroup`s is that the return value of the functions is lost
+therefore they make correct error handling impossible. The solution for this
+problem is `errgroup.Group`. This is very similar to a `WaitGroup`, the main
+difference is that its `Wait` method returns an `error` that comes from a
+failing task. If any of the tasks in the group returns a non-nil error, then
+the `Wait` returns immediately (closing the other tasks) and the error will be
+available to be processed.
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"math/rand"
+
+	"golang.org/x/sync/errgroup"
+)
+
+func Task(task int) error {
+	if rand.Intn(10) == task {
+		return fmt.Errorf("Task %v failed\n", task)
+	}
+	fmt.Printf("Task %v completed\n", task)
+	return nil
+}
+
+func main() {
+	eg := &errgroup.Group{}
+	for i := 0; i < 10; i++ {
+		task := i
+		eg.Go(func() error {
+			return Task(task)
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		log.Fatal("Error: ", err)
+	}
+	fmt.Println("Completed successfully!\n")
+}
+```
+
+>	**Note**
+>
+>	By changing the condition in `func Task` to `task % 3 == 0` it becomes
+>	evident that `Wait` returns immediately after receiving an error no matter
+>	how many unfinished tasks are still working.
+
+## Errgroup with cancellable context
+
+A cancellable context is a context for parallel goroutines that can be used to
+stop all of them in a programmatic, safe manner. The example below starts three
+goroutines, two of them runs tickers that tick in contant intervals and the
+third one is waiting for OS signals (and will exit on `ctrl-c`).
+
+Theres is also a timed function call using `time.AfterFunc` that will run the
+closure it is given as the second argument after a given timeout.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"golang.org/x/sync/errgroup"
+)
+
+func main() {
+
+	ctx, done := context.WithCancel(context.Background())
+	g, gctx := errgroup.WithContext(ctx)
+
+	// goroutine to check for signals to gracefully finish all functions
+	g.Go(func() error {
+		signalChannel := make(chan os.Signal, 1)
+		signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
+
+		select {
+		case sig := <-signalChannel:
+			fmt.Printf("Received signal: %s\n", sig)
+			done()
+		case <-gctx.Done():
+			fmt.Printf("closing signal goroutine\n")
+			return gctx.Err()
+		}
+
+		return nil
+	})
+
+	// just a ticker every 2s
+	g.Go(func() error {
+		ticker := time.NewTicker(2 * time.Second)
+		for {
+			select {
+			case <-ticker.C:
+				fmt.Printf("ticker 2s ticked\n")
+			case <-gctx.Done():
+				fmt.Printf("closing ticker 2s goroutine\n")
+				return gctx.Err()
+			}
+		}
+	})
+
+	// just a ticker every 1s
+	g.Go(func() error {
+		ticker := time.NewTicker(1 * time.Second)
+		for {
+			select {
+			case <-ticker.C:
+				fmt.Printf("ticker 1s ticked\n")
+			case <-gctx.Done():
+				fmt.Printf("closing ticker 1s goroutine\n")
+				return gctx.Err()
+			}
+		}
+	})
+
+	// force a stop after 20s
+	time.AfterFunc(20*time.Second, func() {
+		fmt.Printf("force finished after 20s\n")
+		done()
+	})
+
+	// wait for all errgroup goroutines
+	if err := g.Wait(); err == nil || err == context.Canceled {
+		fmt.Println("finished clean")
+	} else {
+		fmt.Printf("received error: %v\n", err)
+	}
+}
+```
+
 # File formats
 
 ## XML
