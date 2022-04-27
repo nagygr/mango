@@ -163,6 +163,61 @@ func main() {
 >	name. In fact, a package can reside in multiple files: the contents of
 >	all the files that contain the same package declaration are united.
 
+### Real-life project structure
+
+Big Go projects are structured in a bit more complex way. The details can be
+found [here][5] but the gist is that the code resides in three directories:
+
+-	`cmd`: the executables (if there are any) go under this directory. If there
+	is more than one of them, they all have their own folders below `cmd`.
+-	`internal`: private application and library code goes here -- more details
+	on this can be found [here][6]
+-	`pkg`: public packages, library code goes here -- the code here is safe to
+	be used by others
+
+There are further directories used for other purposes (e.g. `test` for test
+data and test applications, etc.).
+
+A typical structure could be:
+
+```
+[cmd]
+|
++-- [my_exe_1]
+|	|
+|	+-- main.go
+|	+-- ...
+|
++-- [my_exe_2]
+	|
+	+-- main.go
+	+-- ...
+
+[internal]
+|
++-- [package_1]
+	|
+	+-- type_1.go
+	+-- type_2.go
+
+	[package_2]
+	|
+	+-- type_3.go
+
+[pkg]
+|
++-- [package_3]
+	|
+	+-- type_4.go
+```
+
+An executable under `cmd` can be built from the repo root by passing the path
+to its `main.go` to `go build`, e.g:
+
+```bash
+go build cmd/my_exe_1
+```
+
 ### More on imports
 
 Imports can be given *aliases* to make it easier to refer to them in the code:
@@ -1446,3 +1501,5 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [2]: https://golang.org/ref/mod
 [3]: https://go.dev/blog/godoc
 [4]: https://pkg.go.dev/
+[5]: https://github.com/golang-standards/project-layout
+[6]: https://go.dev/doc/go1.4#internalpackages
