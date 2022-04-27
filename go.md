@@ -209,6 +209,9 @@ A typical structure could be:
 +-- [package_3]
     |
     +-- type_4.go
+
+go.mod
+go.sum
 ```
 
 An executable under `cmd` can be built from the repo root by passing the path
