@@ -1,5 +1,10 @@
 # Go packages
 
+## Cloud development
+
+-	`gocloud.dev`: Go CDK is a series of packages that cover various aspects of
+	cloud development
+
 ## XML
 
 ### Serialization
@@ -22,10 +27,12 @@
 ### MS Office XML
 
 -	`baliance.com/gooxml`: Open XML (.docx, .xlsx, .pptx) creation and editing
+-	`github.com/nagygr/ooxml2txt`: Extracts the text from Open XML documents
+	(.docx, .xlsx, .pptx)
 
 ## Testing
 
 ### Mocking
 
--	`https://github.com/golang/mock`: Mocking framework that works with the
+-	`github.com/golang/mock`: Mocking framework that works with the
 	built-in testing module
