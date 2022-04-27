@@ -221,6 +221,12 @@ to its `main.go` to `go build`, e.g:
 go build cmd/my_exe_1
 ```
 
+>	**Note**
+>
+>	Please note, that although it is not necessary to name the package within a
+>	directory the same as the directory, but this is the done in practice. So,
+>	for example the code in `type_3.go` would reside in `package package_2`.
+
 ### More on imports
 
 Imports can be given *aliases* to make it easier to refer to them in the code:
