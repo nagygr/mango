@@ -201,8 +201,8 @@ A typical structure could be:
 |   +-- type_2.go
 |
 +-- [package_2]
-   |
-   +-- type_3.go
+    |
+    +-- type_3.go
 
 [pkg]
 |
