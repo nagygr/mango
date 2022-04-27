@@ -184,31 +184,31 @@ A typical structure could be:
 [cmd]
 |
 +-- [my_exe_1]
-|	|
-|	+-- main.go
-|	+-- ...
+|   |
+|   +-- main.go
+|   +-- ...
 |
 +-- [my_exe_2]
-	|
-	+-- main.go
-	+-- ...
+   |
+   +-- main.go
+   +-- ...
 
 [internal]
 |
 +-- [package_1]
-	|
-	+-- type_1.go
-	+-- type_2.go
-
-	[package_2]
-	|
-	+-- type_3.go
+|   |
+|   +-- type_1.go
+|   +-- type_2.go
+|
++-- [package_2]
+   |
+   +-- type_3.go
 
 [pkg]
 |
 +-- [package_3]
-	|
-	+-- type_4.go
+    |
+    +-- type_4.go
 ```
 
 An executable under `cmd` can be built from the repo root by passing the path
