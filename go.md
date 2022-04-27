@@ -587,6 +587,58 @@ func main() {
 }
 ```
 
+### Conversions between function types
+
+Unfortunately, a function returning a concrete type that implements an
+interface cannot be cast to function returning the interface. This is a problem
+when factory functions for the concrete types of an interface are to be handled
+togther.
+
+A possible solution is to add dedicated constructor to the implementing structs
+that will return an interface.
+
+```go
+type Document interface {
+	GetReader() io.Reader
+}
+
+type TextFile struct {
+	...
+}
+
+func NewTextFile(path string) (*TextFile, error) {
+	...
+}
+
+func NewTextFileAsDocument(path string) (Document, error) {
+	return NewTextFile(string)
+}
+
+func GetReader() io.Reader {
+	...
+}
+
+type DocFactory func (string) (Document, error)
+
+type DocMux struct {
+	registry map[string]DocFactory
+}
+
+func NewDocMux() (*DocMux, error) {
+	registry := map[string]DocFactory {
+		".txt": NewTextFileAsDocument}   // NewTextFile would not compile here
+	
+	return &DocuMux{registry: registry}
+}
+
+func (dm *DocMux) GetDocument(path string) (Document, error) {
+	doc, present := dm.registry[filepath.Ext(path)]
+
+	...
+
+}
+```
+
 ## Deferring calls
 
 The `defer` keyword can be used to instruct the compiler to make a call to a
