@@ -189,9 +189,9 @@ A typical structure could be:
 |   +-- ...
 |
 +-- [my_exe_2]
-   |
-   +-- main.go
-   +-- ...
+    |
+    +-- main.go
+    +-- ...
 
 [internal]
 |
