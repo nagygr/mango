@@ -590,9 +590,9 @@ func main() {
 ### Conversions between function types
 
 Unfortunately, a function returning a concrete type that implements an
-interface cannot be cast to function returning the interface. This is a problem
-when factory functions for the concrete types of an interface are to be handled
-togther.
+interface cannot be cast to a function returning the interface. This is a
+problem when factory functions for the concrete types of an interface are to be
+handled together.
 
 A possible solution is to add dedicated constructor to the implementing structs
 that will return an interface.
