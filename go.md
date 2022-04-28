@@ -594,8 +594,8 @@ interface cannot be cast to a function returning the interface. This is a
 problem when factory functions for the concrete types of an interface are to be
 handled together.
 
-A possible solution is to add dedicated constructor to the implementing structs
-that will return an interface.
+A possible solution is to add a dedicated constructor to the implementing
+structs that will return an interface.
 
 ```go
 type Document interface {
@@ -628,7 +628,7 @@ func NewDocMux() (*DocMux, error) {
 	registry := map[string]DocFactory {
 		".txt": NewTextFileAsDocument}   // NewTextFile would not compile here
 	
-	return &DocuMux{registry: registry}
+	return &DocMux{registry: registry}
 }
 
 func (dm *DocMux) GetDocument(path string) (Document, error) {
@@ -794,6 +794,56 @@ Printing to the standard out using `fmt.Print*` is not possible during testing,
 but the testing object has logging functions (`t.Logf(...)`). Logs are only
 shown for failing tests or when the `-test.v` flag is set when running the
 tests.
+
+# Debugging
+
+It is [possible to debug][7] Go applications using `gdb` but it is not trivial
+to set things up. There's however a dedicated Go debugger that has an interface
+very similar to that of `gdb`'s: [delve][8]. It has an extensive documentation
+within the repository and also has an API that allows the creation of clients.
+
+It can be installed by issuing:
+
+```bash
+go install github.com/go-delve/delve/cmd/dlv@latest
+```
+
+This command will put the `dlv` executable to `~/go/bin`.
+
+Debugging can be started by issuing:
+
+```bash
+dlv debug
+```
+
+This only works if the working directory contains `main.go` with a `main`
+function. Otherwise the path to the package that contains the code for the
+executable has to be given, e.g:
+
+```bash
+dlv debug ./cmd/mypackage
+```
+
+If the executable takes command line arguments, they can be passed to delve
+after a double dash (`--`):
+
+```bash
+dlv debug ./cmd/mypackage -- "arguments" "4" "the_executable"
+```
+
+Debugging starts with the `continue` (`c`) command. The rest of the commands
+are very similar to gdb's commands:
+
+-	`break` (`b`): adds a breakpoint
+-	`step` (`s`): steps through the progrram
+-	`next` (`n`): steps over to the next line
+-	`stepout` (`so`): steps out of current function
+-	`print` (`p`): evaluates expression
+-	`locals`: shows local variables
+-	`quit`: exits delve
+
+For more commands and details on how to uses them, refer to [the
+documentation][9].
 
 # Concurrency
 
@@ -1564,3 +1614,6 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [4]: https://pkg.go.dev/
 [5]: https://github.com/golang-standards/project-layout
 [6]: https://go.dev/doc/go1.4#internalpackages
+[7]: https://go.dev/doc/gdb
+[8]: https://github.com/go-delve/delve/
+[9]: https://github.com/go-delve/delve/tree/master/Documentation/cli
