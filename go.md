@@ -63,6 +63,13 @@ go fmt main.go
 This overwrites the file (can add/remove whitespaces, can remove unnecessary
 imports). Most IDE's call this utility upon saving to disc.
 
+If there are many Go files to format in subdirectories, the command can be used
+in the following format:
+
+```bash
+go fmt ./internal/...
+```
+
 # Module and package handling
 
 ## Automatic downloading on build
