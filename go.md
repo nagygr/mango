@@ -1281,6 +1281,10 @@ Fyne itself is a Go module:
 go get fyne.io/fyne/v2
 ```
 
+### Cross-compilation
+
+#### With CGO
+
 In order to be able to compile to other platforms, the specific toolchains need
 to be installed.
 
@@ -1290,9 +1294,6 @@ To compile to Windows on Arch, install:
 pacman -S mingw-w64-gcc
 ```
 
-### Cross-compilation
-
-#### With CGO
 
 To compile a module for Windows:
 
