@@ -647,14 +647,11 @@ func (dm *DocMux) GetDocument(path string) (Document, error) {
 
 func main() {
 	...
-	dm := NewDocMux()
 	path := os.Args[1]
+	dm, err := NewDocMux()
+	...
 	doc, err := dm.GetDocument(path)
-
-	if err != nil {
-		...
-	}
-
+	...
 	reader = doc.GetReader()
 }
 ```
