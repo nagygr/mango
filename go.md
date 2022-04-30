@@ -621,7 +621,7 @@ func NewTextFileAsDocument(path string) (Document, error) {
 	return NewTextFile(string)
 }
 
-func GetReader() io.Reader {
+func (tf *TextFile) GetReader() io.Reader {
 	...
 }
 
@@ -640,9 +640,22 @@ func NewDocMux() (*DocMux, error) {
 
 func (dm *DocMux) GetDocument(path string) (Document, error) {
 	doc, present := dm.registry[filepath.Ext(path)]
-
 	...
+	return doc(path)
 
+}
+
+func main() {
+	...
+	dm := NewDocMux()
+	path := os.Args[1]
+	doc, err := dm.GetDocument(path)
+
+	if err != nil {
+		...
+	}
+
+	reader = doc.GetReader()
 }
 ```
 
