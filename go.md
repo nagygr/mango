@@ -1292,11 +1292,39 @@ pacman -S mingw-w64-gcc
 
 ### Cross-compilation
 
+#### With CGO
+
 To compile a module for Windows:
 
 ```bash
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build
 ```
+
+#### With fyne-cross
+
+Another possibility is `fyne-cross` which uses a designated Docker image for
+each platform.
+
+It can be installed it by issuing:
+
+```bash
+go install github.com/fyne-io/fyne-cross@latest
+```
+
+First, Docker needs to be started:
+
+```bash
+sudo systemctl start docker
+```
+
+The latest image for a given platform can be pulled by:
+
+```bash
+fyne-cross windows --pull
+```
+
+This command also builds the current project. If `--pull` is omitted then the
+build is performed with the current Docker image.
 
 ### Simple application
 
