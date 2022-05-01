@@ -1174,6 +1174,35 @@ func main() {
 >	function of the cancellable context. The tasks need to listen for the done
 >	signal using a `select`.
 
+# Web applications
+
+## Simple file server
+
+The following simple code creates a file server that serves on port 8100 and
+displays the `index.html` in the current directory or, if that is not present,
+the directory listing:
+
+```go
+package main
+
+import (
+	"flag"
+	"log"
+	"net/http"
+)
+
+func main() {
+	port := flag.String("p", "8100", "port to serve on")
+	directory := flag.String("d", ".", "the directory of static file to host")
+	flag.Parse()
+
+	http.Handle("/", http.FileServer(http.Dir(*directory)))
+
+	log.Printf("Serving %s on HTTP port: %s\n", *directory, *port)
+	log.Fatal(http.ListenAndServe(":"+*port, nil))
+}
+```
+
 # File formats
 
 ## XML
