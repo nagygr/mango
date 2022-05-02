@@ -501,7 +501,10 @@ Embedding is a feature of Go that supports the composition over inheritance
 principle (there is no inheritence in Go). An embedded type's fields and
 methods can be used on the embedding type as if they were its own.
 
-During initialization, the embedded type has to be created explicitly.
+During initialization, the embedded type has to be created explicitly. A
+"constructor" function can also be called for the embedded struct but it has to
+be dereferenced as embedding is by-value and constructors typically return
+pointers.
 
 A field or a method of the embedded type can be shadowed in which case it can
 be referenced with the type's name.
@@ -927,7 +930,6 @@ returns an error with the created string as a message.
 Some packages define functions with the name `Must`. They are usually stand-ins
 for other functions, but with a single return value (no error). They panic
 instead.
-
 
 # Testing
 
