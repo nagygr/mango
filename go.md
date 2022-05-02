@@ -924,6 +924,11 @@ formatted string into it though. This is where `fmt.Errorf(string, ...any)`
 comes into play: it takes a format string and any number of parameters and
 returns an error with the created string as a message.
 
+Some packages define functions with the name `Must`. They are usually stand-ins
+for other functions, but with a single return value (no error). They panic
+instead.
+
+
 # Testing
 
 ## Test setup
