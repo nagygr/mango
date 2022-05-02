@@ -495,6 +495,203 @@ Trying to compile this code results in the following error message:
 		want f(int) int
 ```
 
+# Embedding
+
+Embedding is a feature of Go that supports the composition over inheritance
+principle (there is no inheritence in Go). An embedded type's fields and
+methods can be used on the embedding type as if they were its own.
+
+During initialization, the embedded type has to be created explicitly.
+
+A field or a method of the embedded type can be shadowed in which case it can
+be referenced with the type's name.
+
+In case of interface embedding a diamond situation is possible (when the same
+method is embedded from two sources (e.g. once directly and once through an
+interface that already embeds it)). From version 1.14 this works as expected,
+before that it resulted in compilation error.
+
+The following example shows the basic and the shadowing scenarios:
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Base struct {
+	data int
+	other float32
+}
+
+func (b *Base) ShowFields() {
+	fmt.Printf("%d %f\n", b.data, b.other)
+}
+
+func (b *Base) PrintFields() {
+	fmt.Printf("%d %f\n", b.data, b.other)
+}
+
+type Sub struct {
+	Base
+	data string
+}
+
+func NewSub(idata int, fdata float32, sdata string) *Sub {
+	return &Sub{
+		Base{idata, fdata},
+		sdata,
+	}
+}
+
+func (s *Sub) PrintFields() {
+	s.Base.PrintFields()
+	fmt.Printf("%s (%d, %f)\n", s.data, s.Base.data, s.other)
+}
+
+func main() {
+	s := NewSub(42, 42.0, "Douglas Adams")
+
+	s.PrintFields()
+	s.ShowFields()
+}
+```
+
+Embedding structs in struct result in both data reuse and code reuse, embedding
+interfaces in interfaces unifies the methods of the interfaces.
+
+In case of embedding an interface into a struct it becomes possible for the
+struct to be used anywhere where the interface is expected and to set the
+actual behaviour upon initialization. I.e. the same struct initialized with
+different structs implementing the interface can have a different behaviour
+from instance to instance but all of them will implement the interface when
+seen from the outside.
+
+```go
+type Fooer interface {
+  Foo() string
+}
+
+type Container struct {
+  Fooer
+}
+
+// sink takes a value implementing the Fooer interface.
+func sink(f Fooer) {
+  fmt.Println("sink:", f.Foo())
+}
+
+// TheRealFoo is a type that implements the Fooer interface.
+type TheRealFoo struct {
+}
+
+func (trf TheRealFoo) Foo() string {
+  return "TheRealFoo Foo"
+}
+
+co := Container{Fooer: TheRealFoo{}}
+sink(co)
+```
+
+A typical use-case for this is wrappers, when we wrap an actual struct,
+"overwrite" any number of its methods (with the technique shown above) and then
+pass it on to any place where the interface that it implements is expected.
+This way new features can be added to a struct similarly to how the Decorator
+pattern works in OOP.
+
+The following example shows how a network connection can be decorated with a
+statistics feature and then passed on to functions where the original
+connection would have been passed.
+
+```go
+type StatsConn struct {
+  net.Conn
+
+  BytesRead uint64
+}
+
+// Adding functionality to net.Conn:
+func (sc *StatsConn) Read(p []byte) (int, error) {
+  n, err := sc.Conn.Read(p)
+  sc.BytesRead += uint64(n)
+  return n, err
+}
+
+// Forwarding calls where necessary:
+func (sc *StatsConn) Close() error {
+  return sc.conn.Close()
+}
+
+func main() {
+	conn, err := net.Dial("tcp", u.Host+":80")
+	if err != nil {
+	  log.Fatal(err)
+	}
+
+	// Decorating the actual instance:
+	sconn := &StatsConn{conn, 0}
+
+	// Using it where the original is usually passed:
+	resp, err := ioutil.ReadAll(sconn)
+	if err != nil {
+	  log.Fatal(err)
+	}
+}
+```
+
+A similar example is from the standard library. The `sort.Sort` function takes
+a `sort.Interface` as an argument and uses its functions to parametrize the
+sort algorithm:
+
+```go
+type Interface interface {
+    // Len is the number of elements in the collection.
+    Len() int
+    // Less reports whether the element with
+    // index i should sort before the element with index j.
+    Less(i, j int) bool
+    // Swap swaps the elements with indexes i and j.
+    Swap(i, j int)
+}
+
+func main() {
+	lst := []int{4, 5, 2, 8, 1, 9, 3}
+	sort.Sort(sort.IntSlice(lst))
+	fmt.Println(lst)
+}
+```
+
+The `sort.IntSlice` type implements `sort.Interface` so the algorithm can work
+on `int` slices.
+
+By adding the following definitions, it becomes possible perform a reverse sort
+on any type of containers:
+
+```go
+type reverse struct {
+  sort.Interface
+}
+
+func (r reverse) Less(i, j int) bool {
+  return r.Interface.Less(j, i)
+}
+
+func Reverse(data sort.Interface) sort.Interface {
+  return &reverse{data}
+}
+
+func main() {
+	lst := []int{4, 5, 2, 8, 1, 9, 3}
+	sort.Sort(sort.Reverse(sort.IntSlice(lst)))
+	fmt.Println(lst)
+}
+```
+
+The examples above were taken from Eli Bendersky's articles on Go embedding
+([part 1][10], [part 2][11], [part3][12]). The have more details on the
+subject.
+
 # Functions
 
 ## Function types
@@ -1692,3 +1889,6 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [7]: https://go.dev/doc/gdb
 [8]: https://github.com/go-delve/delve/
 [9]: https://github.com/go-delve/delve/tree/master/Documentation/cli
+[10]: https://eli.thegreenplace.net/2020/embedding-in-go-part-1-structs-in-structs/
+[11]: https://eli.thegreenplace.net/2020/embedding-in-go-part-2-interfaces-in-interfaces/
+[12]: https://eli.thegreenplace.net/2020/embedding-in-go-part-3-interfaces-in-structs/
