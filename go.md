@@ -912,6 +912,26 @@ func main() {
 }
 ```
 
+# Strings
+
+## Stringer interface
+
+The `fmt.Stringer` interface makes it possible for variables to be convertable
+to string. Functions like `Printf` can then take them and print them using the
+`%s` annotation verb.
+
+The interface expects one function:
+
+```go
+func String() string
+```
+
+The receiver can be either a value or a pointer but it is important that if a
+user struct has `String()` method that takes a pointer receiver then the
+objects of that struct have to be passed to Printf-like functions as a pointer.
+Otherwise they won't recognize it as a `Stringer` and will output a generic
+string representation instead of calling the method.
+
 # Errors
 
 Go doesn't have exeptions. Instead it has functions that can return multiple
