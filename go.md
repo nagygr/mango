@@ -927,7 +927,7 @@ func String() string
 ```
 
 The receiver can be either a value or a pointer but it is important that if a
-user struct has `String()` method that takes a pointer receiver then the
+user struct has a `String()` method that takes a pointer receiver then the
 objects of that struct have to be passed to Printf-like functions as a pointer.
 Otherwise they won't recognize it as a `Stringer` and will output a generic
 string representation instead of calling the method.
