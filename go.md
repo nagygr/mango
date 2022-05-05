@@ -1084,7 +1084,7 @@ are very similar to gdb's commands:
 -	`locals`: shows local variables
 -	`quit`: exits delve
 
-For more commands and details on how to uses them, refer to [the
+For more commands and details on how to use them, refer to [the
 documentation][9].
 
 # Concurrency
