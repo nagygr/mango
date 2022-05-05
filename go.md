@@ -1075,7 +1075,8 @@ dlv debug ./cmd/mypackage -- "arguments" "4" "the_executable"
 Debugging starts with the `continue` (`c`) command. The rest of the commands
 are very similar to gdb's commands:
 
--	`break` (`b`): adds a breakpoint
+-	`break` (`b`): adds a breakpoint (e.g. `b filename.go:42`)
+-	`continue` (`c`): runs the program until the next breakpoint or until it ends
 -	`step` (`s`): steps through the program (steps into function calls)
 -	`next` (`n`): steps over to the next line (executes call without stepping inside)
 -	`stepout` (`so`): steps out of current function
