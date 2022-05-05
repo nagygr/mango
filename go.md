@@ -1076,8 +1076,8 @@ Debugging starts with the `continue` (`c`) command. The rest of the commands
 are very similar to gdb's commands:
 
 -	`break` (`b`): adds a breakpoint
--	`step` (`s`): steps through the progrram
--	`next` (`n`): steps over to the next line
+-	`step` (`s`): steps through the program (steps into function calls)
+-	`next` (`n`): steps over to the next line (executes call without stepping inside)
 -	`stepout` (`so`): steps out of current function
 -	`print` (`p`): evaluates expression
 -	`locals`: shows local variables
