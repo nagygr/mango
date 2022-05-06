@@ -946,7 +946,7 @@ couldn't perform its task succesfully. This should always be checked and acted
 upon. Quite often errors are forwarded up the call stack to a point where they
 can be handled correctly.
 
-Errors can be created two ways: the `errors.New(string)` function takes a
+Errors can be created in two ways: the `errors.New(string)` function takes a
 string that becomes the error message. One needs `fmt.Sprintf` to get a
 formatted string into it though. This is where `fmt.Errorf(string, ...any)`
 comes into play: it takes a format string and any number of parameters and
