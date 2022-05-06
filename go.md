@@ -7,6 +7,11 @@ Packages:
 -	`go`: basic development tools
 -	`gopls`: language server (e.g. needed by VS Code)
 
+## Vim support
+
+[This project][13] provides a Vim package with e.g. many custom commands,
+better highlighting, embedded [Delve](#debugging) support.
+
 # Creating and building a simple module
 
 ## Initialize a module
@@ -1920,3 +1925,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [10]: https://eli.thegreenplace.net/2020/embedding-in-go-part-1-structs-in-structs/
 [11]: https://eli.thegreenplace.net/2020/embedding-in-go-part-2-interfaces-in-interfaces/
 [12]: https://eli.thegreenplace.net/2020/embedding-in-go-part-3-interfaces-in-structs/
+[13]: https://github.com/fatih/vim-go
