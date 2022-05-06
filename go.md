@@ -456,7 +456,7 @@ var _ InterfaceName = (*ConcreteTypeName)(nil)
 
 >	**Note**
 >
->	In the line above we declare an unnamedvariable (which will be optimized
+>	In the line above we declare an unnamed variable (which will be optimized
 >	out) and try to assign a pointer of a concrete type (in fact a `nil`
 >	pointer cast to the concrete type so as to avoid instantiation on this side
 >	as well). If the concrete type fails to implement the interface then this
