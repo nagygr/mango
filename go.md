@@ -697,7 +697,7 @@ func main() {
 ```
 
 The examples above were taken from Eli Bendersky's articles on Go embedding
-([part 1][10], [part 2][11], [part3][12]). The have more details on the
+([part 1][10], [part 2][11], [part3][12]). They have more details on the
 subject.
 
 # Functions
