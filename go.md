@@ -823,7 +823,7 @@ func NewTextFile(path string) (*TextFile, error) {
 }
 
 func NewTextFileAsDocument(path string) (Document, error) {
-	return NewTextFile(string)
+	return NewTextFile(path)
 }
 
 func (tf *TextFile) GetReader() io.Reader {
