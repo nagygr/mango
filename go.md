@@ -366,6 +366,126 @@ or it can be requested on the page.
 
 # Compilation
 
+## Build tags
+
+Build tags provide a way for a project to define what goes into a build at
+compilation time. This can be used e.g. to define *free*, *pro* and
+*enterprise* features for an application.
+
+The granularity of this feature is file-level: an entire go source file will be
+compiled or left out depending on the tags set at compilation time.
+
+The following example makes use of the fact that the `init` function of a
+module (which runs before `main`) can be used to initialize resources at a
+module level and there can exist more than `init`s for the same module. In such
+a case, the order that the `init` functions of a module are run is not
+guaranteed but all of them will get called and they will run before the `main`
+function of an application.
+
+The `main.go` can look like this:
+
+```go
+package main
+
+import "fmt"
+
+var features = []string{
+  "Free Feature #1",
+  "Free Feature #2",
+}
+
+func main() {
+  for _, f := range features {
+    fmt.Println(">", f)
+  }
+}
+```
+
+In a separate file, the *pro* features can be added with a tag. A tag is
+defined in a comment with the `+build` prefix. The `pro.go` file will look like
+this:
+
+```go
+// +build pro
+
+package main
+
+func init() {
+  features = append(features,
+    "Pro Feature #1",
+    "Pro Feature #2",
+  )
+}
+```
+
+If we want to add the *pro* features to the application, it has to be built
+with the following command line arguments:
+
+```bash
+go build -tags pro
+```
+
+There can be more than one tag defined for an application. This can mean
+however that sometimes a logic has to be defined between the tags. For example,
+if we want the *enterprise* features to also contain the *pro* features, than
+the `pro.go` file should be defined as follows:
+
+```go
+// +build pro enterprise
+
+package main
+
+func init() {
+  features = append(features,
+    "Pro Feature #1",
+    "Pro Feature #2",
+  )
+}
+
+```
+
+And the `enterprise.go` will look like this:
+
+```go
+// +build enterprise
+
+package main
+
+func init() {
+  features = append(features,
+    "Enterprise Feature #1",
+    "Enterprise Feature #2",
+  )
+}
+```
+
+When tags are listed with a space separator, this realizes an *OR* function, so
+if either tag is defined, the file will be compiled into the project.
+
+*And* logic can be acheived in two ways (comma separated list (no spaces!) or
+separate build lines for the tags):
+
+```go
+// +build pro,enterprise
+```
+
+or
+
+```go
+// +build pro
+// +build enterprise
+```
+
+When setting more than one tags on the command line, they have to be placed
+inside a string literal:
+
+```bash
+go build -tags "pro enterprise"
+```
+
+There's a third logic operator as well: `// +build !pro` will compile the given
+file when *pro* is not set.
+
 ## Cross-compiling
 
 The Go compiler can perform a cross-compilation on and to any system it runs on.
