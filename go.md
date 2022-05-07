@@ -1655,6 +1655,54 @@ be used instead:
 	// ...
 ```
 
+## PDF
+
+### Reading PDFs
+
+There are several libraries that extract the text from a PDF file. The one that
+seemed to handle different files the best from the free libraries was `fitz`.
+
+As it contains C code as well, it needs to be cross-compiled with `CGO`
+enabled:
+
+```bash
+GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=mod
+```
+
+Here's a simple example, that extracts the text from a PDF:
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/gen2brain/go-fitz"
+	"log"
+)
+
+func main() {
+	doc, err := fitz.New("test.pdf")
+
+	if err != nil {
+		log.Panicf("Error creating new fitz (%s)", err.Error())
+	}
+
+	defer doc.Close()
+
+	for n := 0; n < doc.NumPage(); n++ {
+		text, err := doc.Text(n)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		fmt.Printf("\n\nPage %d:\n%s\n", n, text)
+	}
+}
+```
+
+Fitz has several build tags for different purposes but the simple, tagless
+build also works well.
+
 # GUI
 
 ## Cross-platform GUI with Fyne
