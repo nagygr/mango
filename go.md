@@ -1349,6 +1349,18 @@ func main() {
 >	evident that `Wait` returns immediately after receiving an error no matter
 >	how many unfinished tasks are still working.
 
+>	**Note**
+>
+>	Note, how the iterator variable of the `for` loop (`i`) is copied into the
+>	local `task` variable which is then passed to the goroutine. This is
+>	because by passing `i`, it would be shared among every goroutine, thus it
+>	would create a datarace.
+>
+>	In fact, he goroutines won't start until `Wait` is called, as wait groups
+>	and error groups wait for the collection of all goroutines, so if `i` was
+>	directly passed into the goroutines, each would receive the final value of
+>	`i` which is 10 and that's not what we want here.
+
 ## Contexts
 
 Contexts are objects that can be used to share data and to control concurrent
