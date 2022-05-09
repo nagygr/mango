@@ -311,6 +311,14 @@ The documentation of a given package will then be available at:
 `http://localhost:6060/pkg/<package-name>`, e.g.:
 `http://localhost:6060/pkg/github.com/nagygr/saxparser/`.
 
+By default, `godoc` hides the documentation of the internal packages (the
+packages under the folder called `internal`. The behaviour can be changed by
+adding an extra argument (`?m=all`) to the URL:
+
+```
+http://localhost:6060/pkg/<package-name>/?m=all
+```
+
 ## Publishing a package
 
 When publishing a package the commits that will act as versions of the library
