@@ -462,7 +462,7 @@ func init() {
 When tags are listed with a space separator, this realizes an *OR* function, so
 if either tag is defined, the file will be compiled into the project.
 
-*And* logic can be acheived in two ways (comma separated list (no spaces!) or
+*AND* logic can be acheived in two ways (comma separated list (no spaces!) or
 separate build lines for the tags):
 
 ```go
@@ -1398,7 +1398,7 @@ func readValue(ctx context.Context) {
 >	objects always return a new `Context` that has to be used instead of the
 >	old one. `WithValue` for example takes the original context, adds a
 >	key-value pair and returns a `Context` with every previously set value and
->	the new piece of information. This pattern is used by every method handling
+>	the new piece of information. This pattern is used by every method that handle
 >	`Context`s.
 
 In the following example, a handler middleware adds a *guid* to the
