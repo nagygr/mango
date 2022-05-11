@@ -1126,6 +1126,27 @@ relative paths from the given test file.
 The `go test` command also runs a sanity check on the code so it is worth
 issuing it even without actual tests.
 
+## Methods of testing.T
+
+There are two types of functions for failing a test:
+
+1.	failure is registered but execution continues:
+	-	`Fail()`
+	-	`Error()`, `Errorf()`
+2.	immediately fails the function, execution stops:
+	-	`FailNow()`
+	-	`Fatal()`, `Fatalf()`
+
+Logging can be achieved with `Log()` or `Logf()`. Logs are only printed for
+failing tests or if the `-test.v` flag is set. For benchmark tests, the test is
+always printed (to avoid performance dependence on the state of the flag).
+
+A test can be skipped using any of the `Skip()`, `SkipNow()`, `Skipf()`
+functions.
+
+The function `Cleanup(f func())` can be used to set a cleanup function to run
+after the test and its subtests.
+
 ## Coverage
 
 Go has a built-in coverage tool. It can be called in several ways, the simplest
@@ -1162,12 +1183,68 @@ produce different outputs:
 	source files with their lines coloured to red or green to show whether a
 	given line was covered with a test or not
 
-## Logging during testing
+## Example codes
 
-Printing to the standard out using `fmt.Print*` is not possible during testing,
-but the testing object has logging functions (`t.Logf(...)`). Logs are only
-shown for failing tests or when the `-test.v` flag is set when running the
-tests.
+Example codes can be added to the source documentation but they should not go
+in the comment section. Go has a way of checking the examples to that broken or
+incomplete examples are not published.
+
+Example functions are functions that have a name starting with "Example...".
+
+By default example functions are only compiled but not executed. If they
+include concluding line comments where the first line is either "Output:" or
+"Unordered output:" then the functions are compiled and their standard output
+is compared to the line below the output comment line. In the case of unordered
+output, the order of the output doesn't matter.
+
+Here are some examples from the official documentation:
+
+```go
+func ExampleHello() {
+    fmt.Println("hello")
+    // Output: hello
+}
+
+func ExampleSalutations() {
+    fmt.Println("hello, and")
+    fmt.Println("goodbye")
+    // Output:
+    // hello, and
+    // goodbye
+}
+
+func ExamplePerm() {
+    for _, value := range Perm(5) {
+        fmt.Println(value)
+    }
+    // Unordered output: 4
+    // 2
+    // 1
+    // 3
+    // 0
+}
+```
+
+The naming convention to declare examples for the package, a function F, a type
+T and method M on type T are:
+
+```go
+func Example() { ... }
+func ExampleF() { ... }
+func ExampleT() { ... }
+func ExampleT_M() { ... }
+```
+
+Multiple example functions for a package/type/function/method may be provided
+by appending a distinct suffix to the name. The suffix must start with a
+lower-case letter.
+
+```go
+func Example_suffix() { ... }
+func ExampleF_suffix() { ... }
+func ExampleT_suffix() { ... }
+func ExampleT_M_suffix() { ... }
+```
 
 # Debugging
 
