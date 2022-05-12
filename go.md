@@ -1625,7 +1625,7 @@ func main() {
 
 ## Running external commands
 
-External commands can berun using the `Cmd` struct within `os/exec`. The
+External commands can be run using the `Cmd` struct within `os/exec`. The
 `Command(cmd string, args []string)` function takes a command and its arguments
 and returns a pointer to a `Cmd`.
 
@@ -1720,8 +1720,9 @@ func main() {
 }
 ```
 
-There are further examples on the [zetcode][14] showing e.g. how pipes can
-be used to connect commands or connect internal writers/readers to commands.
+There are further examples on the [zetcode][14] showing e.g. how pipes can be
+used to connect commands to eachother or connect internal writers/readers to
+commands.
 
 # Web applications
 
