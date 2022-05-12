@@ -1621,6 +1621,108 @@ func main() {
 >	function of the cancellable context. The tasks need to listen for the done
 >	signal using a `select`.
 
+# Interfacing the OS
+
+## Running external commands
+
+External commands can berun using the `Cmd` struct within `os/exec`. The
+`Command(cmd string, args []string)` function takes a command and its arguments
+and returns a pointer to a `Cmd`.
+
+-	`cmd.Run()`: simply runs the command and returns an error
+-	`cmd.Output()`: returns the standard output of the command as a `[]byte`
+	and an error
+
+The standard input and output streams of the command can also be set and
+controlled.
+
+The following example turns command strings into slices split at spaces so that
+they can be passed to `Command()` and then executes the commands. Please note
+how the first element is handled separately in the command slices as
+`Command()` expects the command name separately from its arguments.
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"os/exec"
+	"strings"
+)
+
+var (
+	commands = []string{
+		"ls",
+		"find . -name \"*.go\"",
+	}
+)
+
+func main() {
+	for i, cmdTxt := range commands {
+		var (
+			args = strings.Split(cmdTxt, " ")
+			cmd *exec.Cmd
+		)
+
+		log.Printf("Args (%d): %v", len(args), args)
+
+		if len(args) == 1 {
+			cmd = exec.Command(args[0])
+		} else {
+			cmd = exec.Command(args[0], args[1:]...)
+		}
+
+		fmt.Printf("Executing command %d (%s)\n", i, cmdTxt)
+		stdout, err := cmd.Output()
+
+		log.Println(string(stdout))
+
+		if err != nil {
+			log.Printf(
+				"The following command failed:\n\n%s\n\nwith this error:\n\n:%s\n",
+				cmd, err.Error(),
+			)
+		}
+	}
+}
+```
+
+The following example is on [zetcode][14]. It feeds input through the standard
+input of the command and also takes its standard output:
+
+```go
+package main
+
+import (
+    "bytes"
+    "fmt"
+    "log"
+    "os/exec"
+    "strings"
+)
+
+func main() {
+    cmd := exec.Command("tr", "a-z", "A-Z")
+
+    cmd.Stdin = strings.NewReader("and old falcon")
+
+    var out bytes.Buffer
+    cmd.Stdout = &out
+
+    err := cmd.Run()
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("translated phrase: %q\n", out.String())
+}
+```
+
+There are further examples on the [zetcode][14] showing e.g. how pipes can
+be used to connect commands or connect internal writers/readers to commands.
+
 # Web applications
 
 ## Simple file server
@@ -2191,3 +2293,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [11]: https://eli.thegreenplace.net/2020/embedding-in-go-part-2-interfaces-in-interfaces/
 [12]: https://eli.thegreenplace.net/2020/embedding-in-go-part-3-interfaces-in-structs/
 [13]: https://github.com/fatih/vim-go
+[14]: https://zetcode.com/golang/exec-command/
