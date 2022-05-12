@@ -91,7 +91,7 @@ If the packages reside in subdirectories, `vet` can be asked to parse them
 recursively:
 
 ```bash
-go vet my/project/...
+go vet ./my/project/...
 ```
 
 More can be found on `vet` [here][15].
