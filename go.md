@@ -1720,7 +1720,7 @@ func main() {
 }
 ```
 
-There are further examples on the [zetcode][14] showing e.g. how pipes can be
+There are further examples on [zetcode][14] showing e.g. how pipes can be
 used to connect commands to eachother or connect internal writers/readers to
 commands.
 
