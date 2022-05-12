@@ -75,6 +75,27 @@ in the following format:
 go fmt ./internal/...
 ```
 
+## Code analysis
+
+Go comes with a tool called `vet` which performs code analysis to find
+suspicious constructs. It uses heuristics so not all reports will be genuine
+problems but typically it's wise to conform to it.
+
+In order to analyse the package in the current directory, simply issue:
+
+```bash
+go vet
+```
+
+If the packages reside in subdirectories, `vet` can be asked to parse them
+recursively:
+
+```bash
+go vet my/project/...
+```
+
+More can be found on `vet` [here][15].
+
 # Module and package handling
 
 ## Automatic downloading on build
@@ -2295,3 +2316,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [12]: https://eli.thegreenplace.net/2020/embedding-in-go-part-3-interfaces-in-structs/
 [13]: https://github.com/fatih/vim-go
 [14]: https://zetcode.com/golang/exec-command/
+[15]: https://pkg.go.dev/cmd/vet
