@@ -1405,6 +1405,29 @@ cores := runtime.NumCPU()
 The size of channels and the number of parallel goroutines can be based on this
 value.
 
+The number of cores that a Go program can use can be retrieved and set by the
+`runtime.GOMAXPROCS()` function. If it is called with a value less than 1, then
+it simple reports the value but doesn't change it. Otherwise it will set the
+value and constrain the program to use the given number of CPUs. This value can
+also be set using an environment variable of the same name. The value defaults
+to the value returned by `runtime.NumCPU()`.
+
+Exactly because it can be set using an environment variable, application should
+use the value returned by `runtime.GOMAXPROCS()` instead of `runtime.NumCPU()`,
+because this way they can honour the request of the user (and still default to
+the maximum available cores).
+
+## Yielding
+
+Sometimes, especially when a goroutine is doing intensive calculation, it is
+advisable to yieled the processor and allow other goroutines to run. There's a
+call that does exactly this: `runtime.Gosched()`. It doesn't stop the current
+goroutine, it only allows the scheduler to get on with its work and start
+others.
+
+[This article][16] has more details on this. Apparently a lot of built-in
+function make calls to this function.
+
 ## Error groups
 
 The problem with `WaitGroup`s is that the return value of the functions is lost
@@ -2317,3 +2340,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [13]: https://github.com/fatih/vim-go
 [14]: https://zetcode.com/golang/exec-command/
 [15]: https://pkg.go.dev/cmd/vet
+[16]: https://winder.ai/cpu-hogging-in-golang/
