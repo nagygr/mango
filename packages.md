@@ -1,9 +1,11 @@
 # Go packages
 
-## Cloud development
+## Web and Cloud development
 
 -	`gocloud.dev`: Go CDK is a series of packages that cover various aspects of
 	cloud development
+-	`github.com/gocolly/colly`: web crawler -- helps to crawl and process web
+	pages
 
 ## XML
 
@@ -24,11 +26,22 @@
 
 ## Document formats
 
+### PDF
+
+-	`github.com/gen2brain/go-fitz`: converts both PDF and EPUB to plain text
+
 ### MS Office XML
 
 -	`baliance.com/gooxml`: Open XML (.docx, .xlsx, .pptx) creation and editing
 -	`github.com/nagygr/ooxml2txt`: Extracts the text from Open XML documents
 	(.docx, .xlsx, .pptx)
+
+## NLP
+
+### Language detection
+
+-	`github.com/pemistahl/lingua-go`: recognizes basically all spoken languages
+	and Latin with high confidence
 
 ## Testing
 
@@ -36,3 +49,9 @@
 
 -	`github.com/golang/mock`: Mocking framework that works with the
 	built-in testing module
+
+## UI
+
+## TUI
+
+-	`github.com/gizak/termui/v3`: TUI library with charts
