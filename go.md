@@ -393,6 +393,9 @@ GOPROXY=https://proxy.golang.org GO111MODULE=on go get github.com/nagygr/ooxml2t
 
 or it can be requested on the page.
 
+Go handles module versions 2 and beyond in a special way. [This article][17]
+gives details about the subject.
+
 # Compilation
 
 ## Build tags
@@ -2341,3 +2344,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [14]: https://zetcode.com/golang/exec-command/
 [15]: https://pkg.go.dev/cmd/vet
 [16]: https://winder.ai/cpu-hogging-in-golang/
+[17]: https://go.dev/blog/v2-go-modules
