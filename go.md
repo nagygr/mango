@@ -1271,7 +1271,8 @@ Time is handled by the `time` standard package. Parsing time from strings is
 done using the so called layout strings. These are strings where a certain date
 and time instance needs to be written in the required format (pattern-based
 formatting). The tricky thing is that a predefined date has to be used for each
-field and the error messages when a value is not right can be hard to decode.
+field and the error messages returned when a value is not right can be hard to
+decode.
 
 The predefined date in a certain format is:
 
