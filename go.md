@@ -1089,6 +1089,28 @@ objects of that struct have to be passed to Printf-like functions as a pointer.
 Otherwise they won't recognize it as a `Stringer` and will output a generic
 string representation instead of calling the method.
 
+# Handling time
+
+## Time formatting
+
+Time is handled by the `time` standard package. Parsing time from strings is
+done using the so called layout strings. These are strings where a certain date
+and time instance needs to be written in the required format (pattern-based
+formatting). The tricky thing is that a predefined date has to be used for each
+field and the error messages when a value is not right can be hard to decode.
+
+The predefined date in a certain format is:
+
+```go
+layout := "2006-01-02 15:04:05.000 -0700 MST"
+```
+
+This layout is then used for parsing a time instance from a string with
+`time.Parse(layout, value string) (Time, error)` and also to turn a variable
+of `time.Time` into a string with `(t time.Time) Format(layout string) string`.
+
+More on this can be read [here][18] and [here][19].
+
 # Errors
 
 Go doesn't have exeptions. Instead it has functions that can return multiple
@@ -2406,3 +2428,5 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [15]: https://pkg.go.dev/cmd/vet
 [16]: https://winder.ai/cpu-hogging-in-golang/
 [17]: https://go.dev/blog/v2-go-modules
+[18]: https://www.geeksforgeeks.org/time-formatting-in-golang/
+[19]: https://yourbasic.org/golang/format-parse-string-time-date-example/
