@@ -96,6 +96,180 @@ go vet ./my/project/...
 
 More can be found on `vet` [here][15].
 
+## Linters
+
+There are many linters for Go and there's a tool, called `golangci-lint` that
+can run them all in parallel. This is a program that has to be installed
+manually (on Arch it can be done using the AUR package of the same name).
+
+It can be configured using a yaml (or toml) file (e.g. `.golangci.yaml`):
+
+```yaml
+linters:
+  disable-all: true
+
+  enable:
+    # Enabled By Default Linters
+    - deadcode # Finds unused code
+    - errcheck # Errcheck is a program for checking for unchecked errors in go programs. These unchecked errors can be critical bugs in some cases
+    - gosimple # Linter for Go source code that specializes in simplifying a code
+    - govet # Vet examines Go source code and reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
+    - ineffassign # Detects when assignments to existing variables are not used
+    - staticcheck # Staticcheck is a go vet on steroids, applying a ton of static analysis checks
+    - structcheck # Finds unused struct fields
+    - typecheck # Like the front-end of a Go compiler, parses and type-checks Go code
+    - unused # Checks Go code for unused constants, variables, functions and types
+    - varcheck # Finds unused global variables and constants
+
+    # Disabled By Default Linters
+    # - asciicheck # Simple linter to check that your code does not contain non-ASCII identifiers
+    - bodyclose # Checks whether HTTP response body is closed successfully
+    # - cyclop # Checks function and package cyclomatic complexity
+    # - depguard # Go linter that checks if package imports are in a list of acceptable packages
+    # - dogsled # Checks assignments with too many blank identifiers (e.g. x, , , _, := f())
+    - dupl # Tool for code clone detection
+    - durationcheck # Check for two durations multiplied together
+    # - errorlint # go-errorlint is a source code linter for Go software that can be used to find code that will cause problemswith the error wrapping scheme introduced in Go 1.13.
+    # - exhaustive # Check exhaustiveness of enum switch statements
+    # - exhaustivestruct # Checks if all struct's fields are initialized
+    # - exportloopref # Checks for pointers to enclosing loop variables
+    # - forbidigo - Forbids identifiers
+    # - forcetypeassert - finds forced type assertions
+    - funlen # Tool for detection of long functions
+    # - gci # Gci control golang package import order and make it always deterministic.
+    # - gochecknoglobals # Check that no global variables exist
+    # - gochecknoinits # Checks that no init functions are present in Go code
+    # - gocognit # Computes and checks the cognitive complexity of functions
+    - goconst # Finds repeated strings that could be replaced by a constant
+    # - gocritic # Provides many diagnostics that check for bugs, performance and style issues. Extensible without recompilation through dynamic rules. Dynamic rules are written declaratively with AST patterns, filters, report message and optional suggestion.
+    # - gocyclo # Computes and checks the cyclomatic complexity of functions
+    # - godot # Check if comments end in a period
+    - godox # Tool for detection of FIXME, TODO and other comment keywords
+    # - goerr113 # Golang linter to check the errors handling expressions
+    - gofmt # Gofmt checks whether code was gofmt-ed. By default this tool runs with -s option to check for code simplification
+    # - gofumpt # Gofumpt checks whether code was gofumpt-ed.
+    # - goheader # Checks is file header matches to pattern
+    - goimports # Goimports does everything that gofmt does. Additionally it checks unused imports
+    # - golint # Golint differs from gofmt. Gofmt reformats Go source code, whereas golint prints out style mistakes
+    # - gomnd # An analyzer to detect magic numbers.
+    # - gomodguard # Allow and block list linter for direct Go module dependencies. This is different from depguard where there are different block types for example version constraints and module recommendations.
+    - goprintffuncname # Checks that printf-like functions are named with f at the end
+    - gosec # Inspects source code for security problems
+    # - ifshort # Checks that your code uses short syntax for if-statements whenever possible
+    # - importas # Enforces consistent import aliases
+    # - interfacer # Linter that suggests narrower interface types
+    - lll # Reports long lines
+    - makezero # Finds slice declarations with non-zero initial length
+    # - maligned # Tool to detect Go structs that would take less memory if their fields were sorted
+    # - misspell # Finds commonly misspelled English words in comments
+    # - nakedret # Finds naked returns in functions greater than a specified function length
+    - nestif # Reports deeply nested if statements
+    # - nilerr # Finds the code that returns nil even if it checks that the error is not nil.
+    # - nlreturn # nlreturn checks for a new line before return and branch statements to increase code clarity
+    # - noctx # noctx finds sending http request without context.Context
+    - nolintlint # Reports ill-formed or insufficient nolint directives
+    # - paralleltest # paralleltest detects missing usage of t.Parallel() method in your Go test
+    # - prealloc # Finds slice declarations that could potentially be preallocated
+    - predeclared # find code that shadows one of Go's predeclared identifiers
+    - revive # Fast, configurable, extensible, flexible, and beautiful linter for Go. Drop-in replacement of golint.
+    # - rowserrcheck # checks whether Err of rows is checked successfully
+    # - scopelint # Scopelint checks for unpinned variables in go programs
+    # - sqlclosecheck # Checks that sql.Rows and sql.Stmt are closed.
+    # - stylecheck # Stylecheck is a replacement for golint
+    # - testpackage # linter that makes you use a separate _test package
+    # - thelper # thelper detects golang test helpers without t.Helper() call and checks the consistency of test helpers
+    # - tparallel # tparallel detects inappropriate usage of t.Parallel() method in your Go test codes
+    # - unconvert # Remove unnecessary type conversions
+    - unparam # Reports unused function parameters
+    - wastedassign # wastedassign finds wasted assignment statements.
+    # - whitespace # Tool for detection of leading and trailing whitespace
+    - wrapcheck # Checks that errors returned from external packages are wrapped
+    # - wsl # Whitespace Linter - Forces you to use empty lines!
+
+# all available settings of specific linters
+linters-settings:
+  nolintlint:
+    # Enable to ensure that nolint directives are all used. Default is true.
+    allow-unused: false
+    # Disable to ensure that nolint directives don't have a leading space. Default is true.
+    allow-leading-space: false
+    # Enable to require an explanation of nonzero length after each nolint directive. Default is false.
+    require-explanation: true
+    # Enable to require nolint directives to mention the specific linter being suppressed. Default is false.
+    require-specific: true
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - lll
+        - goconst
+        - bodyclose
+        - errcheck
+        - funlen
+        - goerr113
+        - dupl
+        - wrapcheck
+
+    # Exclude lll for struct tags
+    - linters:
+      - lll
+      source: "^\\W*\\w+\\W+[\\.\\w]+\\W+\\x60\\w+(:\".+?\")( \\w+(:\".+?\"))*\\x60$" # struct param with tags (\x60 is the backtick)
+
+    # Exclude lll for pragmas
+    - linters:
+      - lll
+      source: "^//(go:|nolint:)"
+
+    # Don't enforce pre-defining and wrapping errors in main packages. Note,
+    # that this rule only applies if golangci-lint is called from the main
+    # directory, see https://github.com/golangci/golangci-lint/issues/1178
+    - path: ^cmd/
+      linters:
+        - goerr113
+        - wrapcheck
+
+    # Don't suggest to replace http.ResponseWriter with io.Writer.
+    - source: "w http\\.ResponseWriter"
+      text: "`w` can be `io.Writer`"
+      linters:
+        - interfacer
+```
+
+It can then be run by issuing:
+
+```bash
+golangci-lint run -v --timeout 5m
+```
+
+in the root directory of a project.
+
+If a line in the code should be left out by the linter, a comment has to be
+added with the following elements:
+
+```
+//nolint:<lint-rule> // <Reason why it is excluded>
+```
+
+Please note that spaces are important in the above line. More than one lint
+rule can be added as a list separated by comma.
+
+E.g.:
+
+```go
+return (*os.File)(tf).Read(p) //nolint:wrapcheck // The same error has to be returned: it can be io.EOF
+```
+
+or
+
+```go
+//nolint:revive //Stutter removal doesn't apply here: package and class name are unrelated
+type MainWindow struct {
+```
+
+More on it can be learned [here][18].
+
 # Module and package handling
 
 ## Automatic downloading on build
@@ -1109,7 +1283,7 @@ This layout is then used for parsing a time instance from a string with
 `time.Parse(layout, value string) (Time, error)` and also to turn a variable
 of `time.Time` into a string with `(t time.Time) Format(layout string) string`.
 
-More on this can be read [here][18] and [here][19].
+More on this can be read [here][19] and [here][20].
 
 # Errors
 
@@ -2428,5 +2602,6 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [15]: https://pkg.go.dev/cmd/vet
 [16]: https://winder.ai/cpu-hogging-in-golang/
 [17]: https://go.dev/blog/v2-go-modules
-[18]: https://www.geeksforgeeks.org/time-formatting-in-golang/
-[19]: https://yourbasic.org/golang/format-parse-string-time-date-example/
+[18]: https://golangci-lint.run/
+[19]: https://www.geeksforgeeks.org/time-formatting-in-golang/
+[20]: https://yourbasic.org/golang/format-parse-string-time-date-example/
