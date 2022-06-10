@@ -1113,7 +1113,7 @@ More on this can be read [here][18] and [here][19].
 
 # Errors
 
-Go doesn't have exeptions. Instead it has functions that can return multiple
+Go doesn't have exceptions. Instead it has functions that can return multiple
 values, one of which is typically a value of type `error`. If the returned
 `error` value is not `nil`, it means that the function encountered an error and
 couldn't perform its task succesfully. This should always be checked and acted
