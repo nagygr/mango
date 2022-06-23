@@ -2062,6 +2062,141 @@ func main() {
 
 ## XML
 
+### Unmarshalling XMLs
+
+The standard `encoding/xml` package provides means to unmarshal XMLs to structs
+in an automated way, using just tags. It can handle elements, attributes, an
+array of elements and custom types as well. An XML element can contain
+instances of itself recursively, this is also handled.
+
+Each struct that corresponds to an XML tag should have a field with the type
+`xml.Name` called `XMLName` that will connect the struct to the XML tag. The
+connection is created by a tag for this field: `xml:"<tagname>"`. All other
+exported fields of the struct can correspond to either child tags of attributes
+of the given tag. An attribute is different from a child tag in that it has
+",attr" after its name in the tag. Similarly the character data of a tag can be
+explicitly exported by adding ",chardata" after its name.
+
+Custom types can be unmarshalled as well if they implement the `Unmarshaller`
+or `UnmarshallerAttr` interfaces.
+
+The following snippet contains examples of these features.
+
+```go
+package main
+
+import (
+	"encoding/xml"
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
+	"time"
+)
+
+type Size struct {
+	Height int
+	Width int
+	Length int
+}
+
+func (s *Size) UnmarshalXMLAttr(attr xml.Attr) error {
+	dimensionsStr := strings.Split(attr.Value, "×")
+
+	if dims := len(dimensionsStr); dims != 3 {
+		return fmt.Errorf(
+			"The number of dimensions in size string is not enough (%d instead of 3)",
+			dims,
+		)
+	}
+
+	dimensions := [3]int{}
+
+	for i := 0; i < 2; i++ {
+		var err error
+		dimensions[i], err = strconv.Atoi(dimensionsStr[i])
+
+		if err != nil {
+			return fmt.Errorf(
+				"Dimension no. %d could not be parsed as int: %s",
+				i, err.Error(),
+			)
+		}
+	}
+
+	s.Height = dimensions[0]
+	s.Width = dimensions[1]
+	s.Length = dimensions[2]
+
+	return nil
+}
+
+type SealTime time.Time
+
+func (s *SealTime) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+    const shortForm = "20060102" // yyyymmdd date format
+
+    var v string
+    d.DecodeElement(&v, &start)
+    parsedTime, err := time.Parse(shortForm, v)
+    
+	if err != nil {
+        return fmt.Errorf(
+			"Error parsing seal time: %s", err.Error(),
+		)
+    }
+    
+	*s = SealTime(parsedTime)
+    return nil
+}
+
+type Owner struct {
+	Name string `xml:"name"`
+	Age int `xml:"age"`
+}
+
+type Box struct {
+	XMLName xml.Name `xml:"box"`
+	Owner Owner `xml:"owner"`
+	Contents string `xml:"contents"`
+	Size Size `xml:"size,attr"`
+	SealTime SealTime `xml:"sealedAt"`
+	Boxes []Box `xml:"box"`
+}
+
+func main() {
+	xmlText := `
+		<box size="45×50×80">
+			<owner>
+				<name>Patrick</name>
+				<age>3</age>
+			</owner>
+			<contents>Toys</contents>
+			<sealedAt>20220623</sealedAt>
+			<box size="25×16×30">
+				<owner>
+					<name>Patrick</name>
+					<age>3</age>
+				</owner>
+				<contents>Toy cars</contents>
+				<sealedAt>20220620</sealedAt>
+			</box>
+		</box>
+	`
+
+	var box Box
+	err := xml.Unmarshal([]byte(xmlText), &box)
+
+	if err != nil {
+		log.Fatalf(
+			"Error parsing XML document: %s", err.Error(),
+		)
+	}
+
+	fmt.Printf("%v\n", box)
+}
+```
+
 ### Parsing large XMLs
 
 Large XML files should be parsed in a SAX-like manner to avoid loading the
