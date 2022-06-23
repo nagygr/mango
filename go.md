@@ -2142,7 +2142,7 @@ func (s *PackTime) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
     
 	if err != nil {
         return fmt.Errorf(
-			"Error parsing seal time: %s", err.Error(),
+			"Error parsing pack time: %s", err.Error(),
 		)
     }
     
