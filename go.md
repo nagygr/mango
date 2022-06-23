@@ -2131,9 +2131,9 @@ func (s *Size) UnmarshalXMLAttr(attr xml.Attr) error {
 	return nil
 }
 
-type SealTime time.Time
+type PackTime time.Time
 
-func (s *SealTime) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (s *PackTime) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
     const shortForm = "20060102" // yyyymmdd date format
 
     var v string
@@ -2146,7 +2146,7 @@ func (s *SealTime) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 		)
     }
     
-	*s = SealTime(parsedTime)
+	*s = PackTime(parsedTime)
     return nil
 }
 
@@ -2160,7 +2160,7 @@ type Box struct {
 	Owner Owner `xml:"owner"`
 	Contents string `xml:"contents"`
 	Size Size `xml:"size,attr"`
-	SealTime SealTime `xml:"sealedAt"`
+	PackTime PackTime `xml:"packedAt"`
 	Boxes []Box `xml:"box"`
 }
 
@@ -2172,14 +2172,14 @@ func main() {
 				<age>3</age>
 			</owner>
 			<contents>Toys</contents>
-			<sealedAt>20220623</sealedAt>
+			<packedAt>20220623</packedAt>
 			<box size="25×16×30">
 				<owner>
 					<name>Patrick</name>
 					<age>3</age>
 				</owner>
 				<contents>Toy cars</contents>
-				<sealedAt>20220620</sealedAt>
+				<packedAt>20220620</packedAt>
 			</box>
 		</box>
 	`
