@@ -1368,6 +1368,21 @@ functions.
 The function `Cleanup(f func())` can be used to set a cleanup function to run
 after the test and its subtests.
 
+## Test case concurrency
+
+By default the test functions within a package are run sequentially but the
+tests in different packages are run concurrently.
+
+If tests in different packages may collide, package-level concurrency can be
+disabled using the `-p 1` command-line switch.
+
+```bash
+go test -p 1 ./pkg/...
+```
+
+Test case-level concurrency is opt-in and the `T.Parallel()` method has to be
+called to enable it. More on this [here][21].
+
 ## Coverage
 
 Go has a built-in coverage tool. It can be called in several ways, the simplest
@@ -2741,3 +2756,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [18]: https://golangci-lint.run/
 [19]: https://www.geeksforgeeks.org/time-formatting-in-golang/
 [20]: https://yourbasic.org/golang/format-parse-string-time-date-example/
+[21]: https://pkg.go.dev/testing#T.Parallel
