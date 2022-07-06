@@ -425,7 +425,7 @@ An executable under `cmd` can be built from the repo root by passing the path
 to its `main.go` to `go build`, e.g:
 
 ```bash
-go build cmd/my_exe_1
+go build ./cmd/my_exe_1
 ```
 
 >	**Note**
