@@ -2358,6 +2358,151 @@ func main() {
 Fitz has several build tags for different purposes but the simple, tagless
 build also works well.
 
+# Database management
+
+## GORM
+
+[Gorm][22] is an ORM (Object-relational mapping) tool, i.e. it is a tool that
+automatically converts between structured datatypes used in a program and a
+relational database model that is based on the same data structure.
+
+Gorm creates (and updates) the database table schemas automatically and
+generates the SQL statements for inserting, updating and deleting rows from the
+tables. It can also handle the possible relations betweeen types/tables.
+
+Gorm uses the convention over configuration philosophy so if very simple naming
+convenstions are followed, no configuration is needed at all for it to be able
+to convert the datatypes into tables.
+
+It can work with the most common databases (SQLite, PostgreSQL, MySQL) and
+theoretically the only difference in the code is where the database connection
+is opened. In reality, there might be differences between the different
+databases so the code needs to be tested on the actual DB.
+
+All that needs to be done for a struct to be usable by Gorm is to embed the
+`Model` type:
+
+```go
+package db
+
+import (
+	"gorm.io/gorm"
+)
+
+type Person struct {
+	gorm.Model
+	Name string
+	Age int
+}
+```
+
+### Relationships
+
+Whenever Gorm finds a data field that's type is not a base type, it requires
+that type to either realize a bunch of interfaces (so that they can be
+marshalled and unmarshalled between Go and SQL) or to be a Gorm model type as
+well that will be handled as a separate table in the DB.
+
+In the latter case, there will be a relationship between the two tables. This
+is done using primary and foreign keys. If nothing else is configured, Gorm
+creates integer primary keys (called `id`) for each type and will look for
+foreign keys with the naming convention: `<type name>Id` where `type name` is
+the name of the other type in the relationship, the ID of which is referenced
+by this foreign key.
+
+>	**Note**
+>
+>	In SQLite the foreign key can simply be of type `uint` but PostgreSQL will
+>	stop with an error in this case if the value of the foreign key can not be
+>	filled in at the time of insertion.
+>
+>	The error message will be something like this: 'ERROR: insert or update on
+>	table "<table name>" violates foreign key constraint "<foreign key name>"
+>	(SQLSTATE 23503).'
+>
+>	The solution is to make all foreign keys nullable. This can be done by
+>	assigning them a pointer type: `*uint`. Gorm knows how to handle them and
+>	will transform these fields into nullable foreign keys which will satisfy
+>	PostgreSQL.
+
+An example:
+
+```go
+package db
+
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
+
+type Run struct {
+	gorm.Model
+	Generator string
+	Generated time.Time
+	Suites    []Suite
+}
+
+type Suite struct {
+	gorm.Model
+	Name      string
+	Source    string
+	Status    string
+	SuiteId   *uint
+	RunId     *uint
+	Suites    []Suite
+	...
+}
+```
+
+The types above model test runs. Each run contains several test suites (that
+contain test cases but that's not shown here). Gorm will turn `Run` into a
+table called `runs` which will have a field called `id`. `Suite` has a field
+called `RunId` (in SQL it will be `run_id`) which will automatically be used as
+a foreign key referencing `Run.Id` (`runs.run_id`).
+
+To make things more complicated, suites can be embedded into eachother, so each
+suite can have a parent suite which is realized by the `Suites` slice and the
+`SuiteId` which will be a foreign key referencing `Suite.Id` of another `Suite`
+instance.
+
+The important takeaway is that the foreign keys should be pointers because some
+databases (e.g. PostgreSQL) require that.
+
+When instantiating the types above, the foreign keys don't have to be filled.
+That is done automatically.
+
+```go
+run := &Run{
+	Generator: "Linux",
+	Generated: time.Now(),
+	Suites: []Suite{
+		{
+			Name: "Test suite 1",
+			Source "test.robot",
+			Status: "PASS",
+		},
+	},
+}
+
+dsn := fmt.Sprintf(
+	"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
+	"localhost", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), "test", 5432,
+)
+dbc, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+if err != nil {
+	panic("Failed to connect to database")
+}
+
+dbc.AutoMigrate(
+	&Run{},
+	&Suite{},
+)
+
+dbc.Create(run)
+```
+
 # GUI
 
 ## Cross-platform GUI with Fyne
@@ -2757,3 +2902,4 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -mod=
 [19]: https://www.geeksforgeeks.org/time-formatting-in-golang/
 [20]: https://yourbasic.org/golang/format-parse-string-time-date-example/
 [21]: https://pkg.go.dev/testing#T.Parallel
+[22]: https://gorm.io/
