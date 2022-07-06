@@ -2417,13 +2417,14 @@ by this foreign key.
 >	filled in at the time of insertion.
 >
 >	The error message will be something like this: 'ERROR: insert or update on
->	table "<table name>" violates foreign key constraint "<foreign key name>"
+>	table "table name" violates foreign key constraint "foreign key name"
 >	(SQLSTATE 23503).'
 >
 >	The solution is to make all foreign keys nullable. This can be done by
 >	assigning them a pointer type: `*uint`. Gorm knows how to handle them and
 >	will transform these fields into nullable foreign keys which will satisfy
 >	PostgreSQL.
+
 
 An example:
 
