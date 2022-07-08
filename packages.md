@@ -24,6 +24,14 @@
 	(see: `xml.Decoder.Token()`)
 -	`github.com/kokardy/saxlike`: SAX parser
 
+## JSON
+
+
+### Viewer
+
+-	`github.com/antonmedv/fx`: JSON viewer (should be installed with `go
+	install` and then run as `fx`
+
 ## Document formats
 
 ### PDF
