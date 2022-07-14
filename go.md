@@ -551,6 +551,12 @@ go build -mod=mod
 
 downloads the latest version.
 
+>	**Note**
+>
+>	The `go mod tidy` command can also be used to get rid of unused
+>	dependencies. It can be a good idea to issue it from time to time to make
+>	sure that unwanted dependencies are deleted.
+
 Packages downloaded by `go build` or `go get` are automatically entered into
 the [official go module directory][4] (it takes a few minutes for the changes
 to get through). Every module has its own page here, where important details
@@ -569,6 +575,56 @@ or it can be requested on the page.
 
 Go handles module versions 2 and beyond in a special way. [This article][17]
 gives details about the subject.
+
+### Working with a yet unpublished module (replacement)
+
+While developing a module, it can come handy if it can be tested from an
+external code base as if it were imported from the web. If the module hasn't
+been published yet this requires a special action: replacing the module's path.
+
+In the `go.mod` file replacement appears as an extra line:
+
+```
+go 1.16
+
+require example.com/theirmodule v0.0.0-unpublished
+replace example.com/theirmodule v0.0.0-unpublished => ../theirmodule
+```
+
+This line can also be added using a command:
+
+```bash
+go mod edit -replace=example.com/theirmodule@v0.0.0-unpublished=../theirmodule
+```
+
+In this case, the `go mod edit` command should be followed by:
+
+```bash
+go get -d example.com/theirmodule@v0.0.0-unpublished
+```
+
+Replacement can also be used when working with a fork of the original
+repository:
+
+```
+go 1.16
+
+require example.com/theirmodule v1.2.3
+
+replace example.com/theirmodule v1.2.3 => example.com/myfork/theirmodule v1.2.3-fixed
+```
+
+or
+
+```bash
+go mod edit -replace=example.com/theirmodule@v1.2.3=example.com/myfork/theirmodule@v1.2.3-fixed
+```
+
+Information about a given module can be printed like this:
+
+```bash
+go list -m example.com/theirmodule
+```
 
 # Compilation
 
