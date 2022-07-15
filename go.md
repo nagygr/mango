@@ -1756,7 +1756,7 @@ func main() {
 >	because by passing `i`, it would be shared among every goroutine, thus it
 >	would create a datarace.
 >
->	In fact, he goroutines won't start until `Wait` is called, as wait groups
+>	In fact, the goroutines won't start until `Wait` is called, as wait groups
 >	and error groups wait for the collection of all goroutines, so if `i` was
 >	directly passed into the goroutines, each would receive the final value of
 >	`i` which is 10 and that's not what we want here.
