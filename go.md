@@ -1466,7 +1466,7 @@ func main() {
 	var perr *MyError
 	if err := doThing(); err != nil {
 		if errors.As(err, &perr) {
-			fmt.Printf("MyError (%s)\n", err.Error())
+			fmt.Printf("MyError (%d)\n", perr.Info)
 		} else {
 			fmt.Printf("Other error (%s)", err.Error())
 		}
