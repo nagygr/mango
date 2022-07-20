@@ -1361,6 +1361,119 @@ Some packages define functions with the name `Must`. They are usually stand-ins
 for other functions, but with a single return value (no error). They panic
 instead.
 
+## Custom errors
+
+There are two typical ways how errors are created by packages:
+
+-	*error variables*: error instances are created (e.g. by using
+	`errors.New()`) and they are returned by functions
+	-	this allows for a simple error copmarison when checking errors
+	-	a downside is that extra information specific to an error location
+		can't be added
+
+-	*custom error types*: similar to how in other languages one creates and
+	throws custom exception classes, in Go one can create custom types that
+	implement the `error` interface that consists of one function: `func
+	Error() string`.
+	-	instead of value comparison, a type comparison can be performed when
+		checking
+	-	it is possible to add extra information where needed
+
+Both ways are supported by the `errors` package and the provided facilities
+should always be prefered over raw comparison. One of the reasons for this is
+that errors are often wrapped to add layers in the function stack using
+`fmt.Errorf()`'s verb: `%w`. This makes it possible to later unwrap the
+internal errors (e.g. by using `errors.Unwrap(err error) error`).
+
+### Using error variables
+
+The `errors.Is()` function can be used to test error values.
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+var myError = errors.New("This is my error")
+
+func returnError() error {
+	return myError
+}
+
+func doThing() error {
+	if err := returnError(); err != nil {
+		return fmt.Errorf(
+			"An error was returned while doing the thing: %w",
+			err,
+		)
+	}
+
+	return nil
+}
+
+func main() {
+	if err := doThing(); err != nil {
+		if errors.Is(err, myError) {
+			fmt.Printf("MyError (%s)\n", err.Error())
+		} else {
+			fmt.Printf("Other error (%s)", err.Error())
+		}
+	}
+}
+```
+
+### Using custom error structs
+
+The `errors.As()` function can be used to compare types.
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+type MyError struct {
+	Info int
+}
+
+func (m *MyError) Error() string {
+	return fmt.Sprintf(
+		"MyError: %d", m.Info,
+	)
+}
+
+func returnError() error {
+	return &MyError{Info: 42}
+}
+
+func doThing() error {
+	if err := returnError(); err != nil {
+		return fmt.Errorf(
+			"An error was returned while doing the thing: %w",
+			err,
+		)
+	}
+
+	return nil
+}
+
+func main() {
+	var perr *MyError
+	if err := doThing(); err != nil {
+		if errors.As(err, &perr) {
+			fmt.Printf("MyError (%s)\n", err.Error())
+		} else {
+			fmt.Printf("Other error (%s)", err.Error())
+		}
+	}
+}
+```
+
 # Testing
 
 ## Test setup
